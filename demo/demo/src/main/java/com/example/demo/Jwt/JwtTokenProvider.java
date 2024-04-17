@@ -23,9 +23,6 @@ public class JwtTokenProvider {
 
     private SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    // @Value("${jwt.secret}")
-    // private String secretKey;
-
     @Value("${jwt.expirationMs}")
     private long jwtExpirationMs;
 

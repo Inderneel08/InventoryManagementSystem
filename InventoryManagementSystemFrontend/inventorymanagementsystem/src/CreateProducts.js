@@ -97,13 +97,17 @@ function CreateProducts()
       }
 
       if(!subCategory){
-        Swal.fire({
-          icon: 'error',
-          title: "Error",
-          text: "Please enter product sub category",
-        });
 
-        return ;
+        if(productCategory==='edibles' || productCategory==='consumer_durables' || productCategory==='clothes'){
+          Swal.fire({
+            icon: 'error',
+            title: "Error",
+            text: "Please enter product sub category",
+          });
+
+          return ;
+        }
+
       }
 
       if(!productBrand){
@@ -148,12 +152,21 @@ function CreateProducts()
 
       const imageFile = document.getElementById('productImage').files[0];
 
-      formData.append('file',imageFile);
+      if(!imageFile){
+        Swal.fire({
+          icon: 'error',
+          title: "Error",
+          text: "Please upload an image",
+        });
+
+        return ;
+      }
+
+      formData.append('productImage',imageFile);
 
       const response = await fetch("http://localhost:8080/uploadImage",{
           method:'POST',
           headers: {
-            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
             Role:sessionStorage.getItem('role'),
           },
@@ -163,8 +176,26 @@ function CreateProducts()
 
       const data = await response.json();
 
-      if(response.ok()){
+      if(response.ok){
         setuploadedImage(data.imagePath);
+        Swal.fire({
+          icon: 'success',
+          title: "Success",
+          text: "Image upload succeeded",
+          didClose : () => {
+            document.getElementById('productImage').value=null;
+          }
+        });
+      }
+      else{
+        Swal.fire({
+          icon:'error',
+          title:'Error',
+          text:'Image upload failed',
+          didClose : () => {
+            document.getElementById('productImage').value=null;
+          }
+        });
       }
     }
 
@@ -185,7 +216,6 @@ function CreateProducts()
           name="productName"
           value={productName}
           onChange={(event) => setProductName(event.target.value)}
-          required
         />
         {/* <div className="invalid-feedback">Please provide product name.</div> */}
       </div>
@@ -201,7 +231,6 @@ function CreateProducts()
           name="productQuantity"
           value={productQuantity}
           onChange={(event) => setProductQuantity(parseInt(event.target.value))}
-          required
         />
         {/* <div className="invalid-feedback">Please provide product quantity.</div> */}
       </div>
@@ -215,7 +244,6 @@ function CreateProducts()
           name="productCategory"
           value={productCategory}
           onChange={(event) => setProductCategory(event.target.value)}
-          required
         >
           {productCategories.map((category) => (
             <option key={category.value} value={category.value}>
@@ -238,7 +266,6 @@ function CreateProducts()
               name="productSubCategory"
               value={subCategory}
               onChange={(event) => setSubCategory(event.target.value)}
-              required
             >
               {edibleSubCategory.map((category) => (
                 <option key={category.value} value={category.value}>
@@ -260,7 +287,6 @@ function CreateProducts()
               name="productSubCategory"
               value={subCategory}
               onChange={(event) => setSubCategory(event.target.value)}
-              required
             >
               {consumerDurablesSubCategory.map((category) => (
                 <option key={category.value} value={category.value}>
@@ -282,7 +308,6 @@ function CreateProducts()
               name="productSubCategory"
               value={subCategory}
               onChange={(event) => setSubCategory(event.target.value)}
-              required
             >
               {clothesSubCategory.map((category) => (
                 <option key={category.value} value={category.value}>
@@ -320,7 +345,6 @@ function CreateProducts()
                 id="productImage"
                 name="productImage"
                 onChange={(event) => handleImageChange(event.target.files[0])}
-                required
               />
 
               <button type="submit" style={{ marginLeft:'3%' }} onClick={uploadImage}>

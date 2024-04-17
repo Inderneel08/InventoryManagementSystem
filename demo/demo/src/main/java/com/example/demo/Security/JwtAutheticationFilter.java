@@ -46,8 +46,9 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
 
                 if (jwtTokenProvider.validateToken(jwtToken)) {
 
-                    if (servletPath.equals("/createProduct")){
+                    if (servletPath.equals("/createProduct")||(servletPath.equals("/uploadImage"))){
                         if(role.equals("ADMIN")){
+                            System.out.println("To filter");
                             filterChain.doFilter(request, response);
                         }
                     }
