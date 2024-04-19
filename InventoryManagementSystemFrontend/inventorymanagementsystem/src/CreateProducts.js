@@ -15,6 +15,10 @@ function CreateProducts()
 
     const [uploadedImage,setuploadedImage]     = useState('');
 
+    const [costPerUnit,setCostPerUnit]         = useState(0.0);
+
+    const [productId,setProductId]             = useState(''); 
+
     const productCategories = [
         {value:'',label:'Select a product category'},
         {value:'edibles', label:'Edibles'},
@@ -64,7 +68,19 @@ function CreateProducts()
         }
     }
 
-    const createProductSubmitRequest = async () =>{
+    const createProductSubmitRequest = async (event) =>{
+      event.preventDefault();
+
+
+      if(!productId){
+        Swal.fire({
+          icon: 'error',
+          title: "Error",
+          text: "Please enter a product id",
+        });
+
+        return ;
+      }
 
       if(!productName){
         Swal.fire({
@@ -110,16 +126,6 @@ function CreateProducts()
 
       }
 
-      if(!productBrand){
-        Swal.fire({
-          icon: 'error',
-          title: "Error",
-          text: "Please enter product brand",
-        });
-
-        return ;
-      }
-
       if(!uploadedImage){
         Swal.fire({
           icon: 'error',
@@ -130,6 +136,15 @@ function CreateProducts()
         return ;
       }
 
+      if(!costPerUnit){
+        Swal.fire({
+          icon: 'error',
+          title: "Error",
+          text: "Please enter cost per unit item",
+        });
+
+        return ;
+      }
 
 
       const response = await fetch("http://localhost:8080/createProduct",{
@@ -140,13 +155,35 @@ function CreateProducts()
             Role:sessionStorage.getItem('role'),
           },
 
-          body:JSON.stringify({productName,productQuantity,productCategory,subCategory,productBrand,uploadedImage}),
+          body:JSON.stringify({productName,productQuantity,productCategory,subCategory,productBrand,uploadedImage,costPerUnit}),
       });
 
       const data = await response.json();
+
+      if(response.ok){
+        Swal.fire({
+          icon: 'success',
+          title: "Success",
+          text: data.message,
+          didClose : () => {
+            window.location.reload();
+          }
+        });
+      }
+      else{
+        Swal.fire({
+          icon:'error',
+          title:'Error',
+          text:data.message,
+          didClose : () => {
+            window.location.reload();
+          }
+        });
+      }
     }
     
-    const uploadImage = async () => {
+    const uploadImage = async (event) => {
+      event.preventDefault();
 
       const formData = new FormData();
 
@@ -158,7 +195,7 @@ function CreateProducts()
           title: "Error",
           text: "Please upload an image",
         });
-
+        
         return ;
       }
 
@@ -208,6 +245,20 @@ function CreateProducts()
       <br />
 
       <div className="form-group">
+        <label htmlFor="productId">Product Id:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="productId"
+          name="productId"
+          value={productId}
+          onChange={(event) => setProductId(event.target.value)}
+        />
+      </div>
+
+      <br />
+
+      <div className="form-group">
         <label htmlFor="productName">Product Name:</label>
         <input
           type="text"
@@ -217,7 +268,6 @@ function CreateProducts()
           value={productName}
           onChange={(event) => setProductName(event.target.value)}
         />
-        {/* <div className="invalid-feedback">Please provide product name.</div> */}
       </div>
 
       <br />
@@ -322,6 +372,21 @@ function CreateProducts()
       <br />
       
       <div className="form-group">
+        <label htmlFor="costPerUnit">Cost Per Unit:</label>
+        <input
+          type="number"
+          className="form-control"
+          id="costPerUnit"
+          name="costPerUnit"
+          value={costPerUnit}
+          onChange={(event) => setCostPerUnit(parseFloat(event.target.value))}
+          step={0.01}
+        />
+      </div>
+
+      <br />
+      
+      <div className="form-group">
         <label htmlFor="productName">Product Brand:</label>
         <input
           type="text"
@@ -330,7 +395,6 @@ function CreateProducts()
           name="productBrand"
           value={productBrand}
           onChange={(event) => setProductBrand(event.target.value)}
-          required
         />
       </div>
 
@@ -347,7 +411,7 @@ function CreateProducts()
                 onChange={(event) => handleImageChange(event.target.files[0])}
               />
 
-              <button type="submit" style={{ marginLeft:'3%' }} onClick={uploadImage}>
+              <button type='button' style={{ marginLeft:'3%' }} onClick={uploadImage}>
                 Upload
               </button>
           </div>
@@ -355,7 +419,7 @@ function CreateProducts()
 
       <br />
 
-      <button type="submit" className="btn btn-primary" style={{ marginBottom: '5%' }} onClick={createProductSubmitRequest}>
+      <button type='button' className="btn btn-primary" style={{ marginBottom: '5%' }} onClick={createProductSubmitRequest}>
         Submit
       </button>
     </form>

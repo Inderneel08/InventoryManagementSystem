@@ -35,7 +35,7 @@ public class JwtTokenProvider {
 
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
-        System.out.println("EmailId is:"+userDetails.getUsername());
+        System.out.println("EmailId is:" + userDetails.getUsername());
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -58,6 +58,7 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) throws UsernameNotFoundException {
+        System.out.println("Validating....");
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
 
@@ -67,7 +68,7 @@ public class JwtTokenProvider {
 
             final String emailId = getEmailIdFromToken(token);
 
-            System.out.println("Email :"+emailId);
+            System.out.println("Email :" + emailId);
 
             if (customUserDetailsServices.loadUserByUsername(emailId) != null) {
                 return (true);

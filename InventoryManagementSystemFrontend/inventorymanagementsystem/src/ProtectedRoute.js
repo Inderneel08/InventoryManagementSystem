@@ -18,6 +18,8 @@ const checkAuthentication = async () => {
     }
   } catch (error) {
     console.error('Authentication error:', error);
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('role');
     return null;
   }
 };

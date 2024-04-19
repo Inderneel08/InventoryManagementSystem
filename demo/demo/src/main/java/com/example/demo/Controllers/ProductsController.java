@@ -1,5 +1,6 @@
 package com.example.demo.Controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import com.example.demo.DAO.Product;
+import com.example.demo.ServiceLayer.ProductServiceLayer;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,16 +22,40 @@ import java.util.*;
 @RestController
 public class ProductsController {
 
+    @Autowired
+    private ProductServiceLayer productServiceLayer;
+
     @PostMapping("/createProduct")
     public ResponseEntity<?> createProducts(@RequestBody Map<String, String> jwtRequest) {
-        return (ResponseEntity.ok("Product Created"));
+        Product product = new Product();
+
+        product.setPath(jwtRequest.get("uploadedImage"));
+        product.setBrand(jwtRequest.get("productBrand"));
+        product.setSubcategory(jwtRequest.get("subCategory"));
+        product.setCategory(jwtRequest.get("productCategory"));
+        product.setCount(jwtRequest.get("productQuantity"));
+        product.setProductName(jwtRequest.get("productName"));
+        product.setCostPerUnit(jwtRequest.get("costPerUnit"));
+
+        try {
+            if (!productServiceLayer.createProduct(product)) {
+                ResponseEntity.badRequest().body(createResponse("Product Creation failed as a product already exists with the same name"));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return (ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createResponse(e.getMessage())));
+        }
+
+        return (ResponseEntity.ok(createResponse("Product created successfull")));
     }
 
     @PostMapping("/uploadImage")
     public ResponseEntity<?> uploadImage(@RequestParam("productImage") MultipartFile productImage) {
         String filename = UUID.randomUUID().toString() + "-" + productImage.getOriginalFilename();
 
-        Path uploadDir = Paths.get("C:/Users/inder/Documents/GitHub/InventoryManagementSystem/demo/demo/src/main/resources/uploads");
+        Path uploadDir = Paths.get("C:/Users/inder/Desktop/uploads/");
 
         try {
             if (!Files.exists(uploadDir)) {
@@ -46,9 +73,15 @@ public class ProductsController {
 
         Map<String, String> response = new HashMap<>();
 
-        response.put("imagePath", "C:/Users/inder/Documents/GitHub/InventoryManagementSystem/demo/demo/src/main/resources/uploads" + filename);
+        response.put("imagePath", "C:/Users/inder/Desktop/uploads/" + filename);
 
         return (ResponseEntity.ok(response));
+    }
+
+    private Map<String, String> createResponse(String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", message);
+        return response;
     }
 
 }

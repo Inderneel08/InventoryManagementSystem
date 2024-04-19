@@ -20,23 +20,29 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
+    @Column(name = "productId")
+    private String productId;
+
     @Column(name = "productName")
     private String productName;
 
     @Column(name = "count")
-    private int count;
+    private String count;
 
     @Column(name = "category")
     private String category;
 
     @Column(name = "costPerUnit")
-    private double costPerUnit;
+    private String costPerUnit;
 
     @Column(name = "brand")
     private String brand;
 
     @Column(name = "discount")
     private int discount;
+
+    @Column(name = "subcategory")
+    private String subcategory;
 
     @Column(name = "path", columnDefinition = "TEXT")
     private String path;
