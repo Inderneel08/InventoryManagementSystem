@@ -6,13 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import com.example.demo.DAO.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, BigInteger> {
 
-    @Query(value = "Select * from products p where p.productName = :productName", nativeQuery = true)
-    Product findByProductName(@Param("productName") String productName);
-
+    @Query(value = "SELECT * FROM  products p where p.productId = :productId", nativeQuery = true)
+    Product findByProductId(@Param("productId") String productId);
 }

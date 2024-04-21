@@ -16,7 +16,7 @@ public class ProductServiceLayer implements ProductInterface {
     @Override
     public boolean createProduct(Product product) {
 
-        if(productRepository.findByProductName(product.getProductName())!=null){
+        if(productRepository.findByProductId(product.getProductId())!=null){
             return(false);
         }
 

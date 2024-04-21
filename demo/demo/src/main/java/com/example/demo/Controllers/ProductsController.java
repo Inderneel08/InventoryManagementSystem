@@ -36,19 +36,22 @@ public class ProductsController {
         product.setCount(jwtRequest.get("productQuantity"));
         product.setProductName(jwtRequest.get("productName"));
         product.setCostPerUnit(jwtRequest.get("costPerUnit"));
+        product.setProductId(jwtRequest.get("productId"));
 
         try {
             if (!productServiceLayer.createProduct(product)) {
-                ResponseEntity.badRequest().body(createResponse("Product Creation failed as a product already exists with the same name"));
+                return (ResponseEntity.badRequest().body(
+                        createResponse(
+                                "Product Creation failed as a product already exists with the same product id")));
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
 
             return (ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createResponse(e.getMessage())));
         }
 
-        return (ResponseEntity.ok(createResponse("Product created successfull")));
+        return (ResponseEntity.ok(createResponse("Product created successfully")));
     }
 
     @PostMapping("/uploadImage")

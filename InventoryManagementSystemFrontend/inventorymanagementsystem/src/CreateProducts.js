@@ -155,7 +155,7 @@ function CreateProducts()
             Role:sessionStorage.getItem('role'),
           },
 
-          body:JSON.stringify({productName,productQuantity,productCategory,subCategory,productBrand,uploadedImage,costPerUnit}),
+          body:JSON.stringify({productName,productQuantity,productCategory,subCategory,productBrand,uploadedImage,costPerUnit,productId}),
       });
 
       const data = await response.json();
