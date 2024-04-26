@@ -1,5 +1,7 @@
 package com.example.demo.ServiceLayer;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,18 @@ public class ProductServiceLayer implements ProductInterface {
     @Override
     public boolean createProduct(Product product) {
 
-        if(productRepository.findByProductId(product.getProductId())!=null){
-            return(false);
+        if (productRepository.findByProductId(product.getProductId()) != null) {
+            return (false);
         }
 
         productRepository.save(product);
 
-        return(true);
+        return (true);
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return (productRepository.findProductsUsingLimit());
     }
 
 }

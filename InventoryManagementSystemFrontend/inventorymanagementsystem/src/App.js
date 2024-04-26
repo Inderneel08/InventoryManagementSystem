@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import Logout from './logout_user';
 import ShoppingCart from './ShoppingCart';
 import CreateProducts from './CreateProducts';
+import ShowProducts from './ShowProducts';
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
     <BrowserRouter>
         <Routes>
           <Route path="/"               element={<ProtectedRoute> <MyNavbar/> </ProtectedRoute>} >
-              <Route path="products"    element={<Home />}></Route>
+              <Route path="products"    element={<ShowProducts />}></Route>
               <Route path="signIn"      element={<SignIn />}></Route>
               <Route path="register"    element={<Register />}></Route>
               <Route path="contact"     element={<Contact />}></Route>
