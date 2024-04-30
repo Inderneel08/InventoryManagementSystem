@@ -1,5 +1,6 @@
 package com.example.demo.ServiceLayer;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,16 @@ public class ProductServiceLayer implements ProductInterface {
     @Override
     public List<Product> getAllProducts() {
         return (productRepository.findProductsUsingLimit());
+    }
+
+    @Override
+    public List<Product> backProducts(BigInteger id) {
+        return(productRepository.findBackProducts(id));
+    }
+
+    @Override
+    public List<Product> fowardProducts(BigInteger id) {
+        return(productRepository.findForwardProducts(id));
     }
 
 }

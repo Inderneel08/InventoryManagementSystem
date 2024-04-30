@@ -46,7 +46,7 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
 
                 if (jwtTokenProvider.validateToken(jwtToken)) {
 
-                    if (servletPath.equals("/createProduct") || (servletPath.equals("/uploadImage"))) {
+                    if (servletPath.equals("/createProduct") || (servletPath.equals("/uploadImage")) || (servletPath.equals("/forward"))) {
                         if (role.equals("ADMIN")) {
                             System.out.println("To filter");
                             filterChain.doFilter(request, response);
@@ -61,17 +61,12 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
 
-        } else if (requestTokenHeader == null || requestTokenHeader != null) {
-            String servletPath = request.getServletPath();
-
-            if (servletPath.equals("/getAllProducts")) {
-                filterChain.doFilter(request, response);
-            }
         } else {
             String servletPath = request.getServletPath();
 
             if ((servletPath.equals("/login")) || (servletPath.equals("/register"))
-                    || (servletPath.equals("/adminLogin"))) {
+                    || (servletPath.equals("/adminLogin")) || (servletPath.equals("/getAllProducts"))|| ((servletPath
+                            .equals("/forward")))) {
                 filterChain.doFilter(request, response);
             }
         }

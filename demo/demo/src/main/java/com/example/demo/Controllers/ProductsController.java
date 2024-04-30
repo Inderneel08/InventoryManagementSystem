@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.DAO.Product;
 import com.example.demo.ServiceLayer.ProductServiceLayer;
 
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +29,47 @@ public class ProductsController {
 
     @GetMapping("/getAllProducts")
     public ResponseEntity<?> getAllProducts() {
-        return(ResponseEntity.ok().body(productServiceLayer.getAllProducts()));
+        int back = 0;
+
+        Map<String, Object> responseData = new HashMap<>();
+
+        responseData.put("back", back);
+        responseData.put("products", productServiceLayer.getAllProducts());
+
+        return (ResponseEntity.ok().body(responseData));
+    }
+
+    @PostMapping("/previous")
+    public ResponseEntity<?> backProducts(@RequestBody Map<String, String> jwtRequest) {
+
+    }
+
+    @PostMapping("/forward")
+    public ResponseEntity<?> forwardProducts(@RequestBody Map<String, Object> jwtRequest) {
+
+        BigInteger forwardId = BigInteger.valueOf(Long.parseLong((String) jwtRequest.get("id")));
+
+        System.out.println(forwardId);
+
+        Map<String, Object> responseData = new HashMap<>();
+
+        List<Product> productList = productServiceLayer.fowardProducts(forwardId);
+
+        responseData.put("back", 1);
+        responseData.put("products", productList);
+
+        BigInteger lastINDEX = productList.get(productList.size() - 1).getId();
+
+        List<Product> nextProductList = productServiceLayer.fowardProducts(lastINDEX);
+
+        if(nextProductList.size()==0){
+            responseData.put("next", 0);
+        }
+        else{
+            responseData.put("next", 1);
+        }
+
+        return (ResponseEntity.ok().body(responseData));
     }
 
     @PostMapping("/createProduct")
@@ -64,7 +105,8 @@ public class ProductsController {
     public ResponseEntity<?> uploadImage(@RequestParam("productImage") MultipartFile productImage) {
         String filename = UUID.randomUUID().toString() + "-" + productImage.getOriginalFilename();
 
-        Path uploadDir = Paths.get("C:/Users/inder/Desktop/uploads/");
+        Path uploadDir = Paths.get(
+                "C:/Users/inder/Documents/GitHub/InventoryManagementSystem/InventoryManagementSystemFrontend/inventorymanagementsystem/public/uploads/");
 
         try {
             if (!Files.exists(uploadDir)) {
@@ -82,7 +124,9 @@ public class ProductsController {
 
         Map<String, String> response = new HashMap<>();
 
-        response.put("imagePath", "C:/Users/inder/Desktop/uploads/" + filename);
+        response.put("imagePath",
+                "C:/Users/inder/Documents/GitHub/InventoryManagementSystem/InventoryManagementSystemFrontend/inventorymanagementsystem/public/uploads/"
+                        + filename);
 
         return (ResponseEntity.ok(response));
     }
