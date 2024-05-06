@@ -18,10 +18,10 @@ public interface ProductRepository extends JpaRepository<Product, BigInteger> {
     @Query(value = "SELECT * FROM products LIMIT 6", nativeQuery = true)
     List<Product> findProductsUsingLimit();
 
-    @Query(value = "SELECT * FROM products p where p.id < :id  order by  p.id desc LIMIT 6",nativeQuery = true)
+    @Query(value = "SELECT * FROM products p where p.id < :id  order by  p.id desc LIMIT 12", nativeQuery = true)
     List<Product> findBackProducts(@Param("id") BigInteger id);
 
-    @Query(value = "SELECT * FROM products p where p.id > :id  LIMIT 6", nativeQuery = true)
+    @Query(value = "SELECT * FROM products p where p.id > :id  LIMIT 12", nativeQuery = true)
     List<Product> findForwardProducts(@Param("id") BigInteger id);
 
 }

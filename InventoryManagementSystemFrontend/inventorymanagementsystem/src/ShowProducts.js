@@ -26,7 +26,7 @@ function ShowProducts()
                 document.getElementById('previous').style.color='#b8b8b8';
 
                 document.getElementById('forward').disabled=true;
-                document.getElementById('forward').style.pointerEvents='none';
+                document.getElementById('forward').style.removeProperty('pointer-events');
                 document.getElementById('forward').style.cursor='default';
                 document.getElementById('forward').style.color='#b8b8b8';
             }
@@ -37,13 +37,24 @@ function ShowProducts()
                 document.getElementById('previous').style.color='#b8b8b8';
 
                 document.getElementById('forward').disabled=false;
-                document.getElementById('forward').style.pointerEvents='none';
+                document.getElementById('forward').style.removeProperty('pointer-events');
                 document.getElementById('forward').style.cursor='pointer';
                 document.getElementById('forward').style.color='#0D6EFD';
             }
             else if(back===1 && next===0){
                 document.getElementById('previous').disabled=false;
-                document.getElementById('previous').style.pointerEvents='none';
+                document.getElementById('previous').style.removeProperty('pointer-events');
+                document.getElementById('previous').style.cursor='pointer';
+                document.getElementById('previous').style.color='#0D6EFD';
+
+                document.getElementById('forward').disabled=true;
+                document.getElementById('forward').style.pointerEvents='none';
+                document.getElementById('forward').style.cursor='pointer';
+                document.getElementById('forward').style.color='#b8b8b8';
+            }
+            else if(back===1 && next===1){
+                document.getElementById('previous').disabled=false;
+                document.getElementById('previous').style.removeProperty('pointer-events');
                 document.getElementById('previous').style.cursor='pointer';
                 document.getElementById('previous').style.color='#0D6EFD';
 
@@ -52,10 +63,6 @@ function ShowProducts()
                 document.getElementById('forward').style.cursor='pointer';
                 document.getElementById('forward').style.color='#0D6EFD';
             }
-            else if(back===1 && next===1){
-
-            }
-
         }
 
         // if(products.length>0 && back===0){
@@ -121,12 +128,26 @@ function ShowProducts()
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: {
+                body: JSON.stringify({
                     id:id,
-                }
+                })
             });
 
             const responseData = await response.json();
+
+            const productsData = responseData.products;
+
+            setback(responseData.back);
+
+            setNext(responseData.next);
+
+            productsData.forEach(function(products){
+                const startIndex = products.path.indexOf('/uploads/');
+
+                products.path = products.path.substring(startIndex);
+            });
+
+            setProducts(productsData);
 
         } catch (error) {
             console.log(error);
@@ -173,7 +194,7 @@ function ShowProducts()
     return(
         <>
             {products.length>0 ? (
-                <div className="entireContent" style={{display:'flex',flexDirection:'column',alignItems:'center' }}>
+                <div className="entireContent" style={{display:'flex',flexDirection:'column',alignItems:'center',height: '882px' }}>
                     <div className="displayItems" style={{ display:'flex',flexDirection:'row',width:'100%' }}>
 
                         {products.map((product,index) => (
@@ -192,6 +213,7 @@ function ShowProducts()
 
                     </div>
 
+                    <br />
                     <br />
                     <div className="pagination_pages" style={{ width:'100%', display:'flex',justifyContent:'center' }}>
                         <Pagination>

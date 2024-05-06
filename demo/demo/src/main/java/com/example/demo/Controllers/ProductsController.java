@@ -40,8 +40,32 @@ public class ProductsController {
     }
 
     @PostMapping("/previous")
-    public ResponseEntity<?> backProducts(@RequestBody Map<String, String> jwtRequest) {
+    public ResponseEntity<?> backProducts(@RequestBody Map<String, Object> jwtRequest) {
+        BigInteger backId = BigInteger.valueOf(Long.parseLong((String) jwtRequest.get("id")));
 
+        System.out.println(backId);
+
+        Map<String, Object> responseData = new HashMap<>();
+
+        List<Product> productList = productServiceLayer.backProducts(backId);
+
+        responseData.put("next", 1);
+
+        BigInteger lastINDEX = productList.get(productList.size() - 1).getId();
+
+        List<Product> backProductList = productServiceLayer.backProducts(lastINDEX);
+
+        if (backProductList.size() == 0) {
+            responseData.put("back", 0);
+        } else {
+            responseData.put("back", 1);
+        }
+
+        Collections.reverse(productList);
+
+        responseData.put("products", productList);
+
+        return (ResponseEntity.ok().body(responseData));
     }
 
     @PostMapping("/forward")
@@ -62,10 +86,9 @@ public class ProductsController {
 
         List<Product> nextProductList = productServiceLayer.fowardProducts(lastINDEX);
 
-        if(nextProductList.size()==0){
+        if (nextProductList.size() == 0) {
             responseData.put("next", 0);
-        }
-        else{
+        } else {
             responseData.put("next", 1);
         }
 
