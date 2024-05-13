@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
+import CloseButton from 'react-bootstrap/CloseButton';
 
 
 function ShoppingCart({showShoppingCart,setshowShoppingCart})
@@ -54,12 +55,12 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
                               <div style={{ border:'1px solid black',width:'8%',display:'flex',justifyContent:'flex-start' }}>
                                 <img src="/uploads/0becf459-efb4-4f40-b43b-9eaf7f919ee2-banana.jpg" alt="Images" style={{ width:'100%' }} />
                               </div>
-                              <div className="p-2" style={{ border:'1px solid black',width:'22%',display:'flex' }}>
-                                <div className="detailsOfCart">
-
+                              <div className="p-2" style={{width:'90%',display:'flex' }}>
+                                <div className="detailsOfCart" style={{ display:'flex',justifyContent:'space-between',width:'100%' }}>
+                                  <b>Bananas</b>
+                                  <CloseButton />
                                 </div>
                                 <div className="priceAndClose" style={{ display:'flex' }}>
-                                  <b>Bananas</b>
                                 </div>
                               </div>
                             </Stack>
