@@ -1,6 +1,10 @@
-import Pagination from 'react-bootstrap/Pagination'; 
+import Pagination from 'react-bootstrap/Pagination';
 import Button from 'react-bootstrap/Button';
 import { useEffect, useState } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import ShoppingCart from './ShoppingCart';
 // import './App.css';
 
 
@@ -11,6 +15,8 @@ function ShowProducts()
     const [back,setback]          = useState(0);
 
     const [next,setNext]          = useState(1);
+
+    const [showShoppingCart,setshowShoppingCart] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -65,26 +71,27 @@ function ShowProducts()
             }
         }
 
-        // if(products.length>0 && back===0){
-        //     document.getElementById('previous').disabled=true;
-        //     document.getElementById('previous').style.pointerEvents='none';
-        //     document.getElementById('previous').style.cursor='default';
-        //     document.getElementById('previous').style.color='#b8b8b8';
-        // }
-        // else if(products.length>0 && back===1 && next===1){
-        //     document.getElementById('previous').disabled=false;
-        //     document.getElementById('previous').style.removeProperty('pointer-events');
-        //     document.getElementById('previous').style.cursor='pointer';
-        //     document.getElementById('previous').style.color='#0D6EFD';
-        // }
-        // else if(products.length>0 && next===0){
-        //     document.getElementById('forward').disabled=false;
-        //     document.getElementById('previous').style.pointerEvents='none';
-        //     document.getElementById('forward').style.cursor='pointer';
-        //     document.getElementById('forward').style.color='#0D6EFD';
-        // }
-
     },[products]);
+
+    function addToCart(index)
+    {
+        const clickedProduct = products[index];
+
+        if(sessionStorage.getItem('cartItems')==null){
+            let cartItems = [];
+            cartItems.push(clickedProduct);
+            console.log(cartItems);
+            sessionStorage.setItem('cartItems',JSON.stringify(cartItems));
+        }
+        else{
+            let cartItems =JSON.parse(sessionStorage.getItem('cartItems'));
+            console.log(cartItems);
+            cartItems.push(clickedProduct);
+            sessionStorage.setItem('cartItems',JSON.stringify(cartItems));
+        }
+
+        setshowShoppingCart(true);
+    }
 
     async function fetchProducts(){
         try {
@@ -194,34 +201,54 @@ function ShowProducts()
     return(
         <>
             {products.length>0 ? (
-                <div className="entireContent" style={{display:'flex',flexDirection:'column',alignItems:'center',height: '882px' }}>
-                    <div className="displayItems" style={{ display:'flex',flexDirection:'row',width:'100%' }}>
+                <>
+                    <Container fluid>
+                        <Row>
+                            {products.slice(0, 6).map((product, index) => (
+                                <Col key={product.id} style={{ display:'flex',flexDirection:'column' }}>
+                                    <img src={`${product.path}`} alt={product.productName} style={{ width: '100%', height: '60%' }} />
+                                    <div className="details">
+                                        <h5 style={{ color: '#141516cc' }}>{`${product.productName}`}</h5>
+                                        <h5>Rs {`${product.costPerUnit}`}</h5>
+                                    </div>
+                                    {product.count==='0'?(
+                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} disabled>OUT OF STOCK</Button>
+                                    ):(
+                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} onClick={() => addToCart(index)}>Add to cart</Button>
+                                    )}
+                                    <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
+                                </Col>
+                            ))}
+                        </Row>
 
-                        {products.map((product,index) => (
-                            <div key={index} className="item" style={{display:'flex',flexDirection:'column',width:'30%' }}>
-                                <img src={`${product.path}`}  alt={product.productName} style={{ width:'100%', height: '100%', objectFit: 'cover' }} />
-                                <div className="details">
-                                    <h5 style={{ color:'#141516cc' }}>{`${product.productName}`}</h5>
-                                    <h5>Rs {`${product.costPerUnit}`}</h5>
-                                </div>
-
-                                <br />
-
-                                <Button variant="dark" style={{ padding:'2%' }} className='addtoCart'>Add to cart</Button>
-                            </div>
-                        ))}
-
-                    </div>
+                        <Row>
+                            {products.slice(6, 12).map((product, index) => (
+                                <Col key={product.id} style={{ display:'flex',flexDirection:'column'  }}>
+                                    <img src={`${product.path}`} alt={product.productName} style={{ width: '100%', height: '60%' }} />
+                                    <div className="details">
+                                        <h5 style={{ color: '#141516cc' }}>{`${product.productName}`}</h5>
+                                        <h5>Rs {`${product.costPerUnit}`}</h5>
+                                    </div>
+                                    {product.count==='0'?(
+                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} disabled>OUT OF STOCK</Button>
+                                    ):(
+                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} onClick={() => addToCart(index)}>Add to cart</Button>
+                                    )}
+                                    <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
+                                </Col>
+                            ))}
+                        </Row>
+                    </Container>
 
                     <br />
-                    <br />
+
                     <div className="pagination_pages" style={{ width:'100%', display:'flex',justifyContent:'center' }}>
                         <Pagination>
                             <Pagination.Prev id='previous' data-id={products[0].id} onClick={previous} />
                             <Pagination.Next id='forward' data-id={products[products.length-1].id} onClick={forward}/>
                         </Pagination>
                     </div>
-                </div>
+                </>
             ):(
                 <>
                 </>

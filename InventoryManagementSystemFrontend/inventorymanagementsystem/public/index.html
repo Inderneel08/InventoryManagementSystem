@@ -28,14 +28,10 @@
     <title>Inventory Management System</title>
 
     <style>
-      .footer {
-        position: fixed;
-        bottom: 0;
-      }
     </style>
 
   </head>
-  <body>
+  <body style="position: relative;">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
@@ -48,13 +44,12 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-
-    <footer class="footer">
-      <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
-        <div class="text-white mb-3 mb-md-0">
-          Copyright © 2024. All rights reserved.
+      <footer class="footer" style="position: absolute; top: 100%;">
+        <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+          <div class="text-white mb-3 mb-md-0">
+            Copyright © 2024. All rights reserved.
+          </div>
         </div>
-      </div>
     </footer>
   </body>
 

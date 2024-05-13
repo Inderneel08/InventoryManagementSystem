@@ -5,7 +5,8 @@ import Button from 'react-bootstrap/Button';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-
+import Container from 'react-bootstrap/Container';
+import Stack from 'react-bootstrap/Stack';
 
 
 function ShoppingCart({showShoppingCart,setshowShoppingCart})
@@ -13,7 +14,10 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const cart = sessionStorage.getItem('cart');
+
+    const cartItems = JSON.parse(sessionStorage.getItem('cartItems'));
+
+    const cartItemsLength = (cartItems? cartItems.length : 0);
 
     const validateEmail = (email) => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,95 +39,39 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
       setshowShoppingCart(false);
     }
 
-    // const handleClose = async()  =>  {
-
-    //     if(!validateEmail(email)){
-    //       Swal.fire({
-    //         icon: 'error',
-    //         title: 'Invalid Email Address!',
-    //         text: 'Please enter a valid email address',
-    //         didClose : () =>{
-    //           document.getElementById('email').focus();
-    //         }
-    //       });
-
-    //       return ;
-    //     }
-      
-    //     if(!validatePassword(password)){
-    //         Swal.fire({
-    //           icon: 'error',
-    //           title: 'Invalid Password!',
-    //           text: 'Password must be at least 8 characters long and contain one special character and one number.',
-    //           didClose : () =>{
-    //             document.getElementById('password').focus();
-    //           }
-    //         });
-
-    //         return;
-    //       }
-    //       else{
-    //         try {
-      
-    //           const response = await fetch("http://localhost:8080/adminLogin",{
-    //             method: 'POST',
-    //             headers: {
-    //               'Content-Type': 'application/json',
-    //             },
-      
-    //             body: JSON.stringify({email,password}),
-    //           });
-      
-    //           const data = await response.json();
-              
-    //           if(response.status===400){
-    //             Swal.fire({
-    //               icon: 'error',
-    //               title: "Error",
-    //               text: data.message
-    //             });
-
-    //             return ;
-    //           }
-
-    //           console.log(data);
-      
-    //           const token = data.token;
-    //           const emailrecieved = data.email;
-    //           const role = data.role;
-
-    //           sessionStorage.setItem('token', token);
-    //           sessionStorage.setItem('emailrecieved', emailrecieved);
-    //           sessionStorage.setItem('role',role);
-
-    //           setshowShoppingCart(false);
-
-    //           navigate('/');           
-    //         } catch (error) {
-    //           console.error('Sign-in error:', error);
-    //         }
-    //       }
-    // };
-
-    console.log(cart);
-
     return(
         <>
             <Modal className="cartModal" show={showShoppingCart} fullscreen={true} onHide={closeModal} backdrop="static">
                 <Modal.Header closeButton>
-                    <Modal.Title>Your Cart ({cart}) </Modal.Title>
+                    <Modal.Title>Your Cart({ cartItemsLength }) </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {cart===0?(
+                    {cartItemsLength===0?(
                         <>
-                            <h1>Your cart is empty</h1>
-                            <span>You don’t have any items in your cart.</span>
+                            {/* <h1>Your cart is empty</h1>
+                            <span>You don’t have any items in your cart.</span> */}
+                            <Stack direction='horizontal' gap={2} style={{ border:'1px solid red' }}>
+                              <div style={{ border:'1px solid black',width:'8%',display:'flex',justifyContent:'flex-start' }}>
+                                <img src="/uploads/0becf459-efb4-4f40-b43b-9eaf7f919ee2-banana.jpg" alt="Images" style={{ width:'100%' }} />
+                              </div>
+                              <div className="p-2" style={{ border:'1px solid black',width:'22%',display:'flex' }}>
+                                <div className="detailsOfCart">
+
+                                </div>
+                                <div className="priceAndClose" style={{ display:'flex' }}>
+                                  <b>Bananas</b>
+                                </div>
+                              </div>
+                            </Stack>
                         </>
                     ):(
                         <>
+                            <Stack direction='horizontal' gap={3}>
+                              Hello
+                            </Stack>
                         </>
                     )}
-                    
+
                 <Form>
                 </Form>
                 </Modal.Body>

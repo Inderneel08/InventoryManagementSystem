@@ -10,6 +10,8 @@ import { useEffect, useState,useRef } from "react";
 import AdminLogin from "./adminLogin";
 import ShoppingCart from "./ShoppingCart";
 import ProtectedRoute from "./ProtectedRoute";
+import ShowProducts from "./ShowProducts";
+import Badge from 'react-bootstrap/Badge';
 
 
 const CustomNavbar = () => {
@@ -31,7 +33,10 @@ const CustomNavbar = () => {
     const [dropdownDetails,setDropdownDetails] = useState(false);
 
     const token = sessionStorage.getItem('token');
+
     const role  = sessionStorage.getItem('role');
+
+    let cartItems =JSON.parse(sessionStorage.getItem('cartItems'));
 
     useEffect(()=>{
 
@@ -73,17 +78,20 @@ const CustomNavbar = () => {
 
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            setCurrentImageIndex((prevIndex) => (prevIndex+1)%backgroundImages.length);
-        },2500);
 
-        return () => clearInterval(intervalId);
+        if(location.pathname === '/' || location.pathname === '/shoppingCart'){
+            const intervalId = setInterval(() => {
+                setCurrentImageIndex((prevIndex) => (prevIndex+1)%backgroundImages.length);
+            },2500);
+
+            return () => clearInterval(intervalId);
+        }
     },[]);
+
 
     return(
     <>
         <Navbar bg="warning" data-bs-theme="light">
-
             <Container>
                 <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
                     <img src="/inventoryimage.jpg" alt="inventoryimage"/>
@@ -98,11 +106,11 @@ const CustomNavbar = () => {
                         )}
 
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        
+
                         <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <NavDropdown title="Categories" id="basic-nav-dropdown" style={{ fontSize: '20px' }}>
-                            
+
                                 <NavDropdown className="custom-dropdown" title="Edibles" style={{ fontSize: '20px' }}  onMouseEnter={handleMouseEnterEdibles} onMouseLeave={handleMouseLeaveEdibles} show={showEdiblesDropdown}>
                                     <NavDropdown.Item as={Link} to="category/fruits">Fruits</NavDropdown.Item>
                                     <NavDropdown.Item as={Link} to="category/vegetables">Vegetables</NavDropdown.Item>
@@ -162,6 +170,7 @@ const CustomNavbar = () => {
 
                                     <Nav.Link as={Link} to="shoppingCart" onClick={changeShoppingCartModal}>
                                         <img src="/cart-shopping-solid.svg" alt="shoppingCart"  style={{ height:'30px', width:'30px'}}/>
+                                        <a href="" style={{ color:'black' }}>Hello</a>
                                     </Nav.Link>
                                 </>
                             )}
@@ -245,8 +254,14 @@ const CustomNavbar = () => {
                             
                             <Nav.Link as={Link} to="contact" style={{ fontSize: '20px' }}>Contact</Nav.Link>
 
-                            <Nav.Link as={Link} to="shoppingCart" onClick={changeShoppingCartModal}>
+                            <Nav.Link as={Link} to="shoppingCart" onClick={changeShoppingCartModal} style={{ display:'flex',width:'20vh' }}>
                                 <img src="/cart-shopping-solid.svg" alt="shoppingCart"  style={{ height:'30px', width:'30px'}}/>
+                                {cartItems?(
+                                    <Badge bg="dark" style={{ borderRadius: '50%', padding: '0.5em 0.75em', fontSize: '1rem',marginLeft:'10%' }}>{cartItems.length}</Badge>
+                                ):(
+                                    <>
+                                    </>
+                                )}
                             </Nav.Link>
                         </Nav>
 
@@ -273,19 +288,18 @@ const CustomNavbar = () => {
             </Container>
         </Navbar>
 
-        {(location.pathname === '/' || location.pathname === '/adminLogin' || location.pathname === '/shoppingCart') && (
+        {(location.pathname === '/' || location.pathname==='/shoppingCart') && (
             // Supermarket.jpg, Vegies.jpg and Market.jpg
 
-            <div className="image-container" style={{ backgroundImage: `url(${backgroundImages[currentImageIndex]})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '882px' }}>
+            <div className="image-container" style={{ backgroundImage: `url(${backgroundImages[currentImageIndex]})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '150vh', backgroundRepeat: 'no-repeat', width:'100%'}}>
             </div>
         )}
 
         <Outlet />
 
         <AdminLogin showModal={showModal} setShowModal={setShowModal} />
-        
-        <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
 
+        <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
     </>
     );
 };
