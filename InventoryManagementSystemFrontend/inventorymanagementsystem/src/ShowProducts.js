@@ -75,7 +75,11 @@ function ShowProducts()
 
     function addToCart(index)
     {
-        const clickedProduct = products[index];
+        const clickedProduct = [
+            {key:'count',value:1},
+            {key:'productId',value:products[index].id},
+            {key:'pricePerItem',value:products[index].costPerUnit}
+        ];
 
         if(sessionStorage.getItem('cartItems')==null){
             let cartItems = [];
@@ -85,8 +89,25 @@ function ShowProducts()
         }
         else{
             let cartItems =JSON.parse(sessionStorage.getItem('cartItems'));
+
             console.log(cartItems);
-            cartItems.push(clickedProduct);
+
+            let itemFound=false;
+
+            for(let i=0;i<cartItems.length;i++){
+                const cartItem = cartItems[i];
+
+                if(cartItem['productId']===clickedProduct['productId']){
+                    cartItems[i]['count']+=1;
+                    itemFound=true;
+                    break;
+                }
+            }
+
+            if(itemFound===false){
+                cartItems.push(clickedProduct);
+            }
+
             sessionStorage.setItem('cartItems',JSON.stringify(cartItems));
         }
 
