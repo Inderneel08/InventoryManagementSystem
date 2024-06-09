@@ -36,7 +36,7 @@ const CustomNavbar = () => {
 
     const role  = sessionStorage.getItem('role');
 
-    let cartItems =JSON.parse(sessionStorage.getItem('cartItems'));
+    const cartItems = JSON.parse(sessionStorage.getItem('cartItems'));
 
     useEffect(()=>{
 

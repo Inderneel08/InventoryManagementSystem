@@ -75,40 +75,46 @@ function ShowProducts()
 
     function addToCart(index)
     {
-        const clickedProduct = [
-            {key:'count',value:1},
-            {key:'productId',value:products[index].id},
-            {key:'pricePerItem',value:products[index].costPerUnit}
-        ];
+        const clickedProduct = {
+            count:1,
+            productId:products[index].id,
+            pricePerItem:parseFloat(products[index].costPerUnit),
+            path:products[index].path,
+            productName:products[index].productName,
+        };
 
-        if(sessionStorage.getItem('cartItems')==null){
-            let cartItems = [];
+        console.log(clickedProduct);
+
+        if(sessionStorage.getItem('cartItems')===null){
+            var cartItems = [];
             cartItems.push(clickedProduct);
             console.log(cartItems);
             sessionStorage.setItem('cartItems',JSON.stringify(cartItems));
         }
         else{
-            let cartItems =JSON.parse(sessionStorage.getItem('cartItems'));
+            var alredyPresentcartItems =JSON.parse(sessionStorage.getItem('cartItems'));
 
-            console.log(cartItems);
+            console.log(alredyPresentcartItems);
 
             let itemFound=false;
 
-            for(let i=0;i<cartItems.length;i++){
-                const cartItem = cartItems[i];
+            for(let i=0;i<alredyPresentcartItems.length;i++){
+                const cartItem = alredyPresentcartItems[i];
 
-                if(cartItem['productId']===clickedProduct['productId']){
-                    cartItems[i]['count']+=1;
+                if(cartItem.productId===clickedProduct.productId){
+                    alredyPresentcartItems[i]['count']+=1;
                     itemFound=true;
                     break;
                 }
             }
 
             if(itemFound===false){
-                cartItems.push(clickedProduct);
+                alredyPresentcartItems.push(clickedProduct);
             }
 
-            sessionStorage.setItem('cartItems',JSON.stringify(cartItems));
+            console.log(alredyPresentcartItems);
+
+            sessionStorage.setItem('cartItems',JSON.stringify(alredyPresentcartItems));
         }
 
         setshowShoppingCart(true);
@@ -237,7 +243,6 @@ function ShowProducts()
                                     ):(
                                         <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} onClick={() => addToCart(index)}>Add to cart</Button>
                                     )}
-                                    <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
                                 </Col>
                             ))}
                         </Row>
@@ -251,11 +256,10 @@ function ShowProducts()
                                         <h5>Rs {`${product.costPerUnit}`}</h5>
                                     </div>
                                     {product.count==='0'?(
-                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} disabled>OUT OF STOCK</Button>
+                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index+6} disabled>OUT OF STOCK</Button>
                                     ):(
-                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index} onClick={() => addToCart(index)}>Add to cart</Button>
+                                        <Button variant="dark" style={{ padding: '2%' }} className='addtoCart' id={index+6} onClick={() => addToCart(index+6)}>Add to cart</Button>
                                     )}
-                                    <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
                                 </Col>
                             ))}
                         </Row>
@@ -274,6 +278,8 @@ function ShowProducts()
                 <>
                 </>
             )}
+
+            <ShoppingCart showShoppingCart={showShoppingCart} setshowShoppingCart={setshowShoppingCart} />
         </>
     );
 }
