@@ -256,7 +256,7 @@ const CustomNavbar = () => {
 
                             <Nav.Link as={Link} to="shoppingCart" onClick={changeShoppingCartModal} style={{ display:'flex',width:'20vh' }}>
                                 <img src="/cart-shopping-solid.svg" alt="shoppingCart"  style={{ height:'30px', width:'30px'}}/>
-                                {cartItems?(
+                                {cartItems && cartItems.length!==0?(
                                     <Badge bg="dark" style={{ borderRadius: '50%', padding: '0.5em 0.75em', fontSize: '1rem',marginLeft:'10%' }}>{cartItems.length}</Badge>
                                 ):(
                                     <>

@@ -86,7 +86,7 @@ const ProtectedRoute = ({ children }) => {
   }
   else{
 
-    if(location.pathname === '/' || location.pathname === '/products' || location.pathname === '/signIn' || location.pathname === '/register' || location.pathname === '/adminLogin' || location.pathname === '/contact' || location.pathname === '/shoppingCart'){
+    if(location.pathname === '/' || location.pathname === '/products' || location.pathname === '/signIn' || location.pathname === '/register' || location.pathname === '/adminLogin' || location.pathname === '/contact' || location.pathname === '/shoppingCart' || location.pathname === '/checkout'){
       return children;
     }
 

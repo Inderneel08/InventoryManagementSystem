@@ -16,7 +16,34 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
     // const [email, setEmail] = useState('');
     // const [password, setPassword] = useState('');
 
-    const cartItems = JSON.parse(sessionStorage.getItem('cartItems'));
+    const [cartItems,setCartItems] = useState([]);
+
+    const [totalCost,setTotalCost] = useState(0.0);
+
+    useEffect(() => {
+      const storedItems = JSON.parse(sessionStorage.getItem('cartItems'));
+
+      setCartItems(storedItems || []);
+
+    },[showShoppingCart]);
+
+    useEffect(() => {
+
+      const calculateTotalCost = () => {
+
+        let total = 0.0;
+
+        cartItems.map(item => {
+          total+=(parseFloat(item.count))*(item.pricePerItem);
+        });
+
+        setTotalCost(total);
+      }
+
+
+      calculateTotalCost();
+
+    },[cartItems]);
 
     const cartItemsLength = (cartItems? cartItems.length : 0);
 
@@ -27,12 +54,48 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
     }
 
     const decrement = (index) => {
-      cartItems[index].count-=1;
+      const newCartItems = [...cartItems];
+
+      if(newCartItems[index].count===1){
+        newCartItems.splice(index,1);
+      }
+      else{
+        newCartItems[index].count-=1;
+      }
+
+      setCartItems(newCartItems);
+
+      sessionStorage.setItem('cartItems',JSON.stringify(newCartItems));
+
+      console.log("Decrement");
     };
 
     const increment = (index) => {
-      cartItems[index].count+=1;
+
+      const newCartItems = [...cartItems];
+
+      newCartItems[index].count+=1;
+
+      setCartItems(newCartItems);
+
+      sessionStorage.setItem('cartItems',JSON.stringify(newCartItems));
+
+      console.log("Increment");
     };
+
+    const removeItem = (e) => {
+      const newCartItems = [...cartItems];
+
+      const currentIndex = e.target.getAttribute('close-id');
+
+      newCartItems.splice(currentIndex,1);
+
+      setCartItems(newCartItems);
+
+      sessionStorage.setItem('cartItems',JSON.stringify(newCartItems));
+
+      console.log("Item Removed");
+    }
 
 
     return(
@@ -46,7 +109,6 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
                         <>
                         </>
                     ):(
-                      // "/uploads/0becf459-efb4-4f40-b43b-9eaf7f919ee2-banana.jpg"
                         cartItems.map((item,index) => (
                             <Stack key={index} direction='horizontal' gap={2} style={{ border:'1px solid black' }}>
                               <div style={{ width:'8%',display:'flex',justifyContent:'flex-start' }}>
@@ -59,9 +121,9 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
                                       <br />
                                       <div className="increaseDecreaseAndPrice" style={{ display:'flex',flexDirection:'row' }}>
                                         <div className="increaseDecrease" style={{ display:'flex',width:'60%' }}>
-                                          <div className="minus" style={{ width:'20%',display:'flex',justifyContent:'center', cursor:'pointer',border:'1px solid rgba(0,0,0,0.1)' }} onClick={decrement(index)}>-</div>
+                                          <div className="minus" style={{ width:'20%',display:'flex',justifyContent:'center', cursor:'pointer',border:'1px solid rgba(0,0,0,0.1)' }} onClick={() => decrement(index)}>-</div>
                                           <input type="text" style={{ width:'35%',textAlign:'center', borderTop:'1px solid rgba(0,0,0,0.1)',borderBottom:'1px solid rgba(0,0,0,0.1)',borderLeft:'none',borderRight:'none' }} value={item.count} readOnly/>
-                                          <div className="plus" style={{ width:'20%',display:'flex',justifyContent:'center', cursor:'pointer',border:'1px solid rgba(0,0,0,0.1)' }} onClick={increment(index)}>+</div>
+                                          <div className="plus" style={{ width:'20%',display:'flex',justifyContent:'center', cursor:'pointer',border:'1px solid rgba(0,0,0,0.1)' }} onClick={() => increment(index)}>+</div>
                                         </div>
 
                                         <div className="price">
@@ -70,7 +132,7 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
                                       </div>
                                   </div>
 
-                                  <CloseButton />
+                                  <CloseButton close-id={index} onClick={removeItem} />
                                 </div>
                               </div>
                             </Stack>
@@ -78,13 +140,35 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
                     )}
                 </Modal.Body>
 
+                {cartItemsLength===0?(
+                  <>
+                  </>
+                ):(
+                  <Modal.Body>
+                    <div className="shipping" style={{ display:'flex',justifyContent:'space-between' }}>
+                      <span>Shipping</span>
+                      <span style={{ color:'#abaaaa' }}>CALCULATED AT CHECKOUT</span>
+                    </div>
+                    
+                    <hr />
+                    
+                    <div className="totalCost" style={{ display:'flex',justifyContent:'space-between' }}>
+                      <span>Subtotal</span>
+                      <span>Rs { totalCost } </span>
+                    </div>
+                  </Modal.Body>
+                )}
+
                 <Modal.Footer>
                   {cartItemsLength===0?(
                     <>
                     </>
                   ):(
                     <>
-                      <Button variant="primary" onClick={() => navigate('/checkout')}>
+                      <Button variant="primary" onClick={() =>{
+                        closeModal();
+                        navigate('/checkout');
+                      } }>
                         Proceed to Checkout
                       </Button>
                     </>

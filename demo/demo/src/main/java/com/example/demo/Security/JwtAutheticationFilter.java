@@ -66,7 +66,7 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
 
             if ((servletPath.equals("/login")) || (servletPath.equals("/register"))
                     || (servletPath.equals("/adminLogin")) || (servletPath.equals("/getAllProducts"))|| ((servletPath
-                            .equals("/forward")))||(servletPath.equals("/previous"))) {
+                            .equals("/forward")))||(servletPath.equals("/previous"))||(servletPath.equals("/getAllStates"))) {
                 filterChain.doFilter(request, response);
             }
         }

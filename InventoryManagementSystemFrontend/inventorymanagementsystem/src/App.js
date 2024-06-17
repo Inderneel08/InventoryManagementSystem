@@ -14,6 +14,7 @@ import Logout from './logout_user';
 import ShoppingCart from './ShoppingCart';
 import CreateProducts from './CreateProducts';
 import ShowProducts from './ShowProducts';
+import Checkout from './Checkout';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
               <Route path="logout"      element={<Logout />} ></Route>
               <Route path="shoppingCart" element={<ShoppingCart />}></Route>
               <Route path="createProducts" element={<CreateProducts />}></Route>
+              <Route path="checkout" element={<Checkout /> }></Route>
 
               <Route path="category">
                 <Route path="edibles" element={<Home />}></Route>
