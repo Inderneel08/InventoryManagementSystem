@@ -19,6 +19,8 @@ function Checkout()
     const [billingAddress,setBillingAddress] = useState('');
     const [shippingAddress,setShippingAddress] = useState('');
 
+    const [cartItems,setCartItems] = useState([]);
+
     const navigate = useNavigate();
 
     const validateEmail = (email) => {
@@ -87,6 +89,8 @@ function Checkout()
 
     useEffect(() => {
         fetchStateLists();
+
+        setCartItems(JSON.parse(sessionStorage.getItem('cartItems')));
     },[]);
 
 
@@ -119,15 +123,23 @@ function Checkout()
                         <MDBInput wrapperClass='mb-4' label='Shipping Address' id='shipping_address' type='text' size="lg" onChange={(e) => setShippingAddress(e.target.value)} value={shippingAddress} />
                     </MDBCol>
 
-                    <MDBCol col='4' md='6' style={{marginTop: '10vh' }}>
-                        <Modal className="cartDetails">
-                            <Modal.Header>
-                                <Modal.Title>Price Details</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                Hello
-                            </Modal.Body>
-                        </Modal>
+                    <MDBCol col='4' md='6'>
+                        <h6 style={{ color:'#878787' }}>PRICE DETAILS</h6>
+                        <hr />
+                        <h5>Price ( {cartItems.length} {cartItems.length>1?(
+                            <>
+                                items
+                            </>
+                        ):(
+                            <>
+                                item
+                            </>
+                        )})</h5>
+
+                        <br />
+
+                        <h5>Discount -Rs({sessionStorage.getItem('setDiscount')})</h5>
+
                     </MDBCol>
                 </MDBRow>
 

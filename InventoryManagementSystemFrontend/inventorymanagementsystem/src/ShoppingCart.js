@@ -20,6 +20,8 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
 
     const [totalCost,setTotalCost] = useState(0.0);
 
+    // const [discount,setDiscount] = useState(0.0);
+
     useEffect(() => {
       const storedItems = JSON.parse(sessionStorage.getItem('cartItems'));
 
@@ -50,6 +52,11 @@ function ShoppingCart({showShoppingCart,setshowShoppingCart})
     console.log(cartItems);
 
     const closeModal = async() => {
+
+      sessionStorage.setItem('totalCost',totalCost);
+
+      sessionStorage.setItem('setDiscount',(0.1)*(totalCost));
+
       setshowShoppingCart(false);
     }
 

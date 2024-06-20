@@ -41,16 +41,26 @@ public class User implements UserDetails {
     @Column(name = "isVerified", nullable = false)
     private int isVerified = -1;
 
+    @Column(name = "state", nullable = true)
+    private String state;
+
+    @Column(name = "address", nullable = true)
+    private String address;
+
+    @Column(name = "pincode", nullable = true)
+    private String pincode;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub
-        // throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        // throw new UnsupportedOperationException("Unimplemented method
+        // 'getAuthorities'");
 
         String roleName = this.getRole();
 
         GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
 
-        return(Collections.singletonList(authority));
+        return (Collections.singletonList(authority));
     }
 
     @Override

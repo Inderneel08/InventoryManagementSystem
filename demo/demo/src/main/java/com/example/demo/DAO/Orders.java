@@ -22,11 +22,11 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
-    @Column(name = "products")
-    private String products;
+    @Column(name = "product")
+    private String product;
 
     @Column(name = "countAllproducts")
-    private int countAllproducts;
+    private String countAllproducts;
 
     @Column(name = "totalAmount")
     private String totalAmount;
@@ -38,5 +38,5 @@ public class Orders {
     private String address;
 
     @Column(name = "otp")
-    private BigInteger otp;
+    private int otp;
 }
