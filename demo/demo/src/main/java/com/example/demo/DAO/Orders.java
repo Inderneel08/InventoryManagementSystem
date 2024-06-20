@@ -1,14 +1,12 @@
 package com.example.demo.DAO;
 
 import java.math.BigInteger;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,18 +23,12 @@ public class Orders {
     @Column(name = "product")
     private String product;
 
-    @Column(name = "countAllproducts")
-    private String countAllproducts;
+    @Column(name = "countProducts")
+    private int countProducts;
 
-    @Column(name = "totalAmount")
-    private String totalAmount;
+    @Column(name = "costPerPiece")
+    private double costPerPiece;
 
-    @Column(name = "state")
-    private int state;
-
-    @Column(name = "address")
-    private String address;
-
-    @Column(name = "otp")
-    private int otp;
+    @Column(name = "orderId")
+    private String orderId;
 }

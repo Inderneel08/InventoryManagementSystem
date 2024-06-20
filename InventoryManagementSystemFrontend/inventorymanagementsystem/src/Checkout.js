@@ -18,8 +18,8 @@ function Checkout()
     const [state, setState] = useState('');
     const [billingAddress,setBillingAddress] = useState('');
     const [shippingAddress,setShippingAddress] = useState('');
-
     const [cartItems,setCartItems] = useState([]);
+    const [netAmount,setNetAmount] = useState(0);
 
     const navigate = useNavigate();
 
@@ -83,6 +83,54 @@ function Checkout()
         }
     }
 
+    const checkout = async() =>{
+        // try {
+        //     const response = await fetch("http://localhost:8080/adminLogin",{
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+    
+        //     body: JSON.stringify({email,state,billingAddress,shippingAddress}),
+        //     });
+    
+        //     const data = await response.json();
+            
+        //     if(response.status===400){
+        //     Swal.fire({
+        //         icon: 'error',
+        //         title: "Error",
+        //         text: data.message
+        //     });
+
+        //     return ;
+        //     }
+
+        //     console.log(data);
+    
+        //     const token = data.token;
+        //     const emailrecieved = data.email;
+        //     const role = data.role;
+
+        //     sessionStorage.setItem('token', token);
+        //     sessionStorage.setItem('emailrecieved',emailrecieved);
+        //     sessionStorage.setItem('role',role);
+
+        //     setShowModal(false);
+
+        //         Swal.fire({
+        //         icon: 'success',
+        //         title: 'Success',
+        //         text: 'Login Successfull',
+        //         didClose: () => {
+        //             navigate('/');
+        //         }
+        //         });
+        // } catch (error) {
+        //     console.error('Sign-in error:', error);
+        // }
+    }
+
     const handleSelect = (e) => {
         setState(e.target.getAttribute('data-value'));
     };
@@ -91,6 +139,8 @@ function Checkout()
         fetchStateLists();
 
         setCartItems(JSON.parse(sessionStorage.getItem('cartItems')));
+
+        setNetAmount(sessionStorage.getItem('totalCost')-sessionStorage.getItem('setDiscount'));
     },[]);
 
 
@@ -104,9 +154,11 @@ function Checkout()
                     <MDBCol col='10' md='6'>
                         <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' size="lg" onChange={(e) => setEmail(e.target.value)} />
 
-                        <select name="state" id="state" className='form-control'>
+                        <select name="state" id="state" className='form-control' onChange={(e) =>setState(e.target.value)}>
                             <option value="">---Select State---</option>
                         </select>
+            
+                        {/* <p>Selected State: {state}</p> */}
 
                         <label htmlFor="state">State</label>
 
@@ -116,7 +168,7 @@ function Checkout()
                         <MDBInput wrapperClass='mb-4' label='Billing Address' id='billing_address' type='text' size="lg" onChange={(e) => setBillingAddress(e.target.value)} value={billingAddress} />
 
                         <input type="checkbox" id="applyAddress" name="applyAddress" onClick={checkboxClicked} />
-                        <label for="applyAddress">Shipping Address same as Billing Address</label>
+                        <label htmlFor="applyAddress">Shipping Address same as Billing Address</label>
                         <br />
                         <br />
 
@@ -138,12 +190,20 @@ function Checkout()
 
                         <br />
 
+                        <h5>Total Amount  Rs({sessionStorage.getItem('totalCost')})</h5>
+                        
+                        <br />
+
                         <h5>Discount -Rs({sessionStorage.getItem('setDiscount')})</h5>
+                        
+                        <hr />
+
+                        <h5>Net Amount Rs({netAmount})</h5>
 
                     </MDBCol>
                 </MDBRow>
 
-                <Button variant="dark" className='submit'>Place Order</Button>
+                <Button variant="dark" className='submit' onClick={checkout}>Place Order</Button>
             </MDBContainer>
         </>
     );
