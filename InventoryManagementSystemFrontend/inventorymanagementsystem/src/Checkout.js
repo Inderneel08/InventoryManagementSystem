@@ -20,6 +20,7 @@ function Checkout()
     const [shippingAddress,setShippingAddress] = useState('');
     const [cartItems,setCartItems] = useState([]);
     const [netAmount,setNetAmount] = useState(0);
+    const [pincode,setPincode] = useState('');
 
     const navigate = useNavigate();
 
@@ -27,10 +28,22 @@ function Checkout()
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if(!emailRegex.test(email)){
-        return(false);
+            return(false);
         }
 
         return(true);
+    }
+
+    const onBlurEvent = async() => {
+        if(!validateEmail(email)){
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Email Address!',
+            text: 'Please enter a valid email address',
+          });
+
+          return ;
+        }
     }
 
     async function fetchStateLists(){
@@ -84,6 +97,18 @@ function Checkout()
     }
 
     const checkout = async() =>{
+        try {
+            const response = await fetch("http://localhost:8080/adminLogin",{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,netAmount,pincode}),
+            });
+        } catch (error) {
+            console.error('Payment Error:', error);
+        }
         // try {
         //     const response = await fetch("http://localhost:8080/adminLogin",{
         //     method: 'POST',
@@ -152,7 +177,7 @@ function Checkout()
 
                 <MDBRow>
                     <MDBCol col='10' md='6'>
-                        <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' size="lg" onChange={(e) => setEmail(e.target.value)} />
+                        <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' size="lg" onChange={(e) => setEmail(e.target.value)} onBlur={onBlurEvent} />
 
                         <select name="state" id="state" className='form-control' onChange={(e) =>setState(e.target.value)}>
                             <option value="">---Select State---</option>
@@ -173,6 +198,8 @@ function Checkout()
                         <br />
 
                         <MDBInput wrapperClass='mb-4' label='Shipping Address' id='shipping_address' type='text' size="lg" onChange={(e) => setShippingAddress(e.target.value)} value={shippingAddress} />
+
+                        <MDBInput wrapperClass='mb-4' label='Pincode' id='pincode' type='text' size="lg" onChange={(e) => setPincode(e.target.value)} value={pincode} />
                     </MDBCol>
 
                     <MDBCol col='4' md='6'>

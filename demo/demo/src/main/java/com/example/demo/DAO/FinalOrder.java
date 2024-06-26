@@ -1,5 +1,7 @@
 package com.example.demo.DAO;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,12 +26,21 @@ public class FinalOrder {
     @Column(name = "state")
     private String state;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "billing_address")
+    private String billing_address;
+
+    @Column(name = "shipping_address")
+    private String shipping_address;
 
     @Column(name = "pincode")
-    private int pincode;
+    private String pincode;
 
     @Column(name = "otp")
     private int otp;
+
+    @Column(name = "date")
+    private LocalDateTime date;
+
+    @Column(name = "email")
+    private String email;
 }

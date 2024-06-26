@@ -24,7 +24,7 @@ function Register() {
   }
 
   const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_])[a-zA-Z0-9!@#$%^&*_]{8,}$/;
 
     return passwordRegex.test(password);
   }
@@ -97,7 +97,7 @@ function Register() {
           Swal.fire({
             icon: 'success',
             title: data.message,
-            text: 'Your account has been successfully registered and a confirmation email has been sent to you.'
+            text: 'Your account has been successfully registered and a confirmation email containing otp has been sent to you.'
           });
         }
 

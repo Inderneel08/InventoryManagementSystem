@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.DAO.FinalOrder;
 
 @Repository
-public interface FinalRepository extends JpaRepository<FinalOrder, String> {
+public interface FinalOrderRepository extends JpaRepository<FinalOrder, String> {
 
 }
