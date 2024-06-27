@@ -96,7 +96,7 @@ function Register() {
         else{
           Swal.fire({
             icon: 'success',
-            title: data.message,
+            // title: data.message,
             text: 'Your account has been successfully registered and a confirmation email containing otp has been sent to you.'
           });
         }

@@ -16,7 +16,9 @@ public class OtpServiceLayer implements OtpInterface {
     public boolean createOtp(Otp otp) {
         Otp findOtp = otpRepository.findByOtp(otp.getOtp());
 
-        if (findOtp == null) {
+        if (findOtp != null) {
+            System.out.println("Terminated");
+
             return (false);
         }
 

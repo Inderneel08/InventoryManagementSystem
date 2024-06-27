@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.ServiceLayer.EmailServiceLayer;
@@ -23,8 +24,11 @@ public class EmailAspect {
 
     @AfterReturning(pointcut = "@annotation(com.example.demo.Aspect.SendEmail)", returning = "result")
     public void sendEmailRegistration(Object result) {
-        if (result instanceof Boolean && (Boolean) result) {
-            if (extractedEmail != null) {
+        if (result instanceof ResponseEntity) {
+            ResponseEntity<?> response = (ResponseEntity<?>) result;
+
+            if (response.getStatusCodeValue() == 200 && extractedEmail != null) {
+                System.out.println(1);
                 String subject = "Registration Successful";
                 String text = "Registration has been successfull use this OTP to confirm the email id ";
 

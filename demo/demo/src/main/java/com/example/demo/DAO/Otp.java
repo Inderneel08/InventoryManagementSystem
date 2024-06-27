@@ -31,4 +31,7 @@ public class Otp {
 
     @Column(name = "date")
     private Date date;
+
+    @Column(name = "operationId")
+    private BigInteger operationId;
 }
