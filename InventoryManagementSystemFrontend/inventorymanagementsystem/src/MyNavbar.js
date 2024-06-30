@@ -288,7 +288,9 @@ const CustomNavbar = () => {
             </Container>
         </Navbar>
 
-        {(location.pathname === '/' || location.pathname==='/shoppingCart') && (
+        {/* || location.pathname === '/showOtpForm' */}
+
+        {(location.pathname === '/' || location.pathname==='/shoppingCart' || location.pathname==='/adminLogin') && (
             // Supermarket.jpg, Vegies.jpg and Market.jpg
 
             <div className="image-container" style={{ backgroundImage: `url(${backgroundImages[currentImageIndex]})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '150vh', backgroundRepeat: 'no-repeat', width:'100%'}}>

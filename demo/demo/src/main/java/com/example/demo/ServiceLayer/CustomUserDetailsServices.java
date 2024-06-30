@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.DAO.User;
 import com.example.demo.Repository.UserRepository;
 
 @Service
@@ -21,6 +23,17 @@ public class CustomUserDetailsServices implements UserDetailsService {
         } else {
             return (null);
         }
+    }
+
+    public boolean checkVerifiedStatus(String email)
+    {
+        User user = userRepository.findByEmail(email);
+
+        if(user.getIsVerified()==-1){
+            return(false);
+        }
+
+        return(true);
     }
 
 }

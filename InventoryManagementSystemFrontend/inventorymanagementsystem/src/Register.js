@@ -97,7 +97,7 @@ function Register() {
           Swal.fire({
             icon: 'success',
             // title: data.message,
-            text: 'Your account has been successfully registered and a confirmation email containing otp has been sent to you.'
+            text: 'Your account has been successfully registered and a confirmation email containing otp has been sent to you please use the otp while doing login.The otp is valid for 24 hours.'
           });
         }
 

@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.DAO.User;
+import com.example.demo.Aspect.ExtractEmail;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 
@@ -30,12 +29,17 @@ public class JwtController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
+    @ExtractEmail
     public ResponseEntity<?> generateToken(@RequestBody Map<String, String> jWtrequest) {
         UserDetails userDetails = customUserDetailsServices.loadUserByUsername(jWtrequest.get("email"));
 
         if (userDetails == null) {
             return (ResponseEntity.badRequest()
                     .body(createResponse("Email id is not registered or the password is incorrect.")));
+        }
+
+        if(!customUserDetailsServices.checkVerifiedStatus(jWtrequest.get("email"))){
+            return(ResponseEntity.status(666).body(createResponse("Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.")));
         }
 
         String[] authorities = (String[]) userDetails.getAuthorities().stream().map(Object::toString)

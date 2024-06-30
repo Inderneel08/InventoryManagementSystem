@@ -15,6 +15,7 @@ import ShoppingCart from './ShoppingCart';
 import CreateProducts from './CreateProducts';
 import ShowProducts from './ShowProducts';
 import Checkout from './Checkout';
+import OtpModal from './OtpModal';
 
 function App() {
 
@@ -42,7 +43,7 @@ function App() {
               <Route path="shoppingCart" element={<ShoppingCart />}></Route>
               <Route path="createProducts" element={<CreateProducts />}></Route>
               <Route path="checkout" element={<Checkout /> }></Route>
-
+              <Route path="showOtpForm" element={<OtpModal />}></Route>
               <Route path="category">
                 <Route path="edibles" element={<Home />}></Route>
                 <Route path="consumerDurables" element={<Home />}></Route>

@@ -73,6 +73,9 @@ function SignIn() {
 
           return ;
         }
+        else if(response.status===666){
+          
+        }
 
         console.log(data);
 
