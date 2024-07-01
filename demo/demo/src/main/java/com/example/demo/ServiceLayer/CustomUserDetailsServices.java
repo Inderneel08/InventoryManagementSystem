@@ -1,12 +1,17 @@
 package com.example.demo.ServiceLayer;
 
+import java.math.BigInteger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DAO.OperationIdOTP;
+import com.example.demo.DAO.Otp;
 import com.example.demo.DAO.User;
+import com.example.demo.Repository.OtpRepository;
 import com.example.demo.Repository.UserRepository;
 
 @Service
@@ -14,6 +19,9 @@ public class CustomUserDetailsServices implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OtpRepository otpRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -34,6 +42,26 @@ public class CustomUserDetailsServices implements UserDetailsService {
         }
 
         return(true);
+    }
+
+    public OperationIdOTP findOtpByEmail(String email)
+    {
+        User user = userRepository.findByEmail(email);
+
+        Otp otp = otpRepository.findByOperationIdAndOperation(user.getId(), 0);
+
+        OperationIdOTP operationIdOTP = new OperationIdOTP();
+
+        if(otp==null){
+            operationIdOTP.setOtp(-1);
+            operationIdOTP.setOperationId(user.getId());
+            return(operationIdOTP);
+        }
+
+        operationIdOTP.setOtp(otp.getOtp());
+        operationIdOTP.setOperationId(user.getId());
+
+        return(operationIdOTP);
     }
 
 }

@@ -58,4 +58,15 @@ public class EmailServiceLayer {
         mailSender.send(message);
     }
 
+    public void sendPlainMail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(sender);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+
+        mailSender.send(message);
+    }
+
 }
