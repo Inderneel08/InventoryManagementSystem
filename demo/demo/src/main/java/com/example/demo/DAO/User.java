@@ -50,6 +50,9 @@ public class User implements UserDetails {
     @Column(name = "pincode", nullable = true)
     private String pincode;
 
+    @Column(name = "incorrectOtpTries")
+    private int incorrectOtpTries;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub

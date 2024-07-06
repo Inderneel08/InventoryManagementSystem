@@ -33,35 +33,46 @@ public class CustomUserDetailsServices implements UserDetailsService {
         }
     }
 
-    public boolean checkVerifiedStatus(String email)
-    {
+    public boolean checkVerifiedStatus(String email) {
         User user = userRepository.findByEmail(email);
 
-        if(user.getIsVerified()==-1){
-            return(false);
+        if (user.getIsVerified() == -1) {
+            return (false);
         }
 
-        return(true);
+        return (true);
     }
 
-    public OperationIdOTP findOtpByEmail(String email)
-    {
+    public OperationIdOTP findOtpByEmail(String email) {
         User user = userRepository.findByEmail(email);
 
         Otp otp = otpRepository.findByOperationIdAndOperation(user.getId(), 0);
 
         OperationIdOTP operationIdOTP = new OperationIdOTP();
 
-        if(otp==null){
+        if (otp == null) {
             operationIdOTP.setOtp(-1);
             operationIdOTP.setOperationId(user.getId());
-            return(operationIdOTP);
+            return (operationIdOTP);
         }
 
         operationIdOTP.setOtp(otp.getOtp());
         operationIdOTP.setOperationId(user.getId());
 
-        return(operationIdOTP);
+        return (operationIdOTP);
+    }
+
+    public void increaseOtpTries(BigInteger userId) {
+        User user = userRepository.findByUserId(userId);
+
+        if (user.getIncorrectOtpTries() < 3) {
+
+            userRepository.increaseOtpTries(userId);
+
+            return;
+        }
+
+        return;
     }
 
 }

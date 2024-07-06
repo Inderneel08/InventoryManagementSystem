@@ -19,6 +19,7 @@ import com.example.demo.DAO.User;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 import com.example.demo.ServiceLayer.EmailServiceLayer;
+import com.example.demo.ServiceLayer.OtpServiceLayer;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
@@ -32,6 +33,9 @@ public class JwtController {
 
     @Autowired
     private EmailServiceLayer emailServiceLayer;
+
+    @Autowired
+    private OtpServiceLayer otpServiceLayer;
 
     @PostMapping("/login")
     public ResponseEntity<?> generateToken(@RequestBody Map<String, String> jWtrequest) {
@@ -52,7 +56,7 @@ public class JwtController {
                 return (ResponseEntity.status(666).body(
                         createOtpResponse(
                                 "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
-                                getOTP.getOperationId())));
+                                getOTP.getOperationId(), 0)));
             }
 
             emailServiceLayer.sendPlainMail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
@@ -61,7 +65,7 @@ public class JwtController {
             return (ResponseEntity.status(666).body(
                     createOtpResponse(
                             "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
-                            getOTP.getOperationId())));
+                            getOTP.getOperationId(), 0)));
         }
 
         String[] authorities = (String[]) userDetails.getAuthorities().stream().map(Object::toString)
@@ -88,7 +92,19 @@ public class JwtController {
 
     @PostMapping("/confirmOtp")
     public ResponseEntity<?> confirmOtp(@RequestBody Map<String, String> request) {
-        
+        BigInteger operationId = BigInteger.valueOf(Long.parseLong(request.get("operationId")));
+
+        int operation = Integer.parseInt(request.get("operation"));
+
+        int otp = Integer.parseInt(request.get("otp"));
+
+        if (!otpServiceLayer.verifyAccount(operation, otp, operationId)) {
+            customUserDetailsServices.increaseOtpTries(operationId);
+
+            return (ResponseEntity.status(305).build());
+        }
+
+        return (ResponseEntity.ok().build());
     }
 
     @PostMapping("/adminLogin")
@@ -133,10 +149,10 @@ public class JwtController {
         return response;
     }
 
-    private Map<String, Object> createOtpResponse(String message, BigInteger operationId) {
+    private Map<String, Object> createOtpResponse(String message, BigInteger operationId, int operation) {
         Map<String, Object> response = new HashMap<>();
 
-        ResponseOtp responseOtp = new ResponseOtp(message, operationId);
+        ResponseOtp responseOtp = new ResponseOtp(message, operationId, operation);
 
         response.put("responseOtp", responseOtp);
 

@@ -14,9 +14,12 @@ function SignIn() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const [operation,setOperation] = useState(0);
+  const [operationId,setOperationId] = useState(0);
   const [otp, setOtp] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [incorrectHits,setIncorrectHits] = useState(0);
+
   const otpInputStyle = {
     width: '50px', // Adjust width and height to make the input square
     height: '50px',
@@ -37,6 +40,50 @@ function SignIn() {
     setOtp('');
     setShowModal(false);
   };
+
+  const submitOtp = async() => {
+    try {
+      const response = await fetch("http://localhost:8080/confirmOtp",{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+        body: JSON.stringify({operation,operationId,otp}),
+      });
+    } catch (error) {
+      console.error('Otp Error:', error);
+    }
+
+    const data = await response.json();
+
+    if(response.status==305){
+      if(incorrectHits==3){
+        handleClose();
+        setIncorrectHits(0);
+        setOperation('');
+        setOperationId('');
+
+        Swal.fire({
+          icon:'warning',
+          text: data.message
+        });
+
+        return ;
+      }
+
+      setIncorrectHits(incorrectHits+1);
+    }
+
+    setIncorrectHits(0);
+    setOperation('');
+    setOperationId('');
+
+    Swal.fire({
+      icon:'success',
+      text: data.message,
+    });
+  }
 
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_])[a-zA-Z0-9!@#$%^&*_]{8,}$/;
@@ -99,10 +146,12 @@ function SignIn() {
         else if(response.status===666){
           Swal.fire({
             icon:'info',
-            text:data.message,
+            text:data.responseOtp.message,
           });
 
           setShowModal(true);
+          setOperationId(data.responseOtp.operationId);
+          setOperation(data.responseOtp.operation);
 
           return ;
         }
@@ -182,7 +231,7 @@ function SignIn() {
         </Modal.Body>
         <Modal.Footer>
           <div className="d-flex justify-content-between w-100">
-            <Button variant="primary">Submit</Button>
+            <Button variant="primary" onClick={submitOtp}>Submit</Button>
             <Button variant="secondary" onClick={handleClose}>Close</Button>
           </div>
         </Modal.Footer>

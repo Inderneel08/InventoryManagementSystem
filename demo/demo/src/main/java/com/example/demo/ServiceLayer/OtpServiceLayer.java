@@ -1,5 +1,7 @@
 package com.example.demo.ServiceLayer;
 
+import java.math.BigInteger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.DAO.Otp;
@@ -26,4 +28,13 @@ public class OtpServiceLayer implements OtpInterface {
 
         return (true);
     }
+
+    public boolean verifyAccount(int operation, int otp, BigInteger operationId) {
+        if (otpRepository.findByOperationIdOperationAndOtp(operation, operationId, otp) != null) {
+            return (true);
+        }
+
+        return (false);
+    }
+
 }

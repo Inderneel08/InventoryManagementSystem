@@ -16,4 +16,6 @@ public class ResponseOtp {
     private String message;
 
     private BigInteger operationId;
+
+    private int operation;
 }
