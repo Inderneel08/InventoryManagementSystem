@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.DAO.OperationIdOTP;
 import com.example.demo.DAO.ResponseOtp;
 import com.example.demo.DAO.User;
-import com.example.demo.Repository.UserRepository;
 import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 import com.example.demo.ServiceLayer.EmailServiceLayer;
 import com.example.demo.ServiceLayer.OtpServiceLayer;
@@ -46,28 +44,6 @@ public class JwtController {
                     .body(createResponse("Email id is not registered or the password is incorrect.")));
         }
 
-        if (!customUserDetailsServices.checkVerifiedStatus(jWtrequest.get("email"))) {
-            OperationIdOTP getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"));
-
-            if (getOTP.getOtp() == -1) {
-                emailServiceLayer.registerEmail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
-                        "Please confirm the email id using this OTP.");
-
-                return (ResponseEntity.status(666).body(
-                        createOtpResponse(
-                                "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
-                                getOTP.getOperationId(), 0)));
-            }
-
-            emailServiceLayer.sendPlainMail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
-                    "Please confirm the email id using this OTP " + getOTP + ".");
-
-            return (ResponseEntity.status(666).body(
-                    createOtpResponse(
-                            "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
-                            getOTP.getOperationId(), 0)));
-        }
-
         String[] authorities = (String[]) userDetails.getAuthorities().stream().map(Object::toString)
                 .toArray(String[]::new);
 
@@ -81,6 +57,40 @@ public class JwtController {
         if (!BCrypt.checkpw(jWtrequest.get("password"), userDetails.getPassword())) {
             return (ResponseEntity.badRequest()
                     .body(createResponse("Email id is not registered or the password is incorrect.")));
+        }
+
+        if (!customUserDetailsServices.checkVerifiedStatus(jWtrequest.get("email"))) {
+            OperationIdOTP getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"));
+
+            if (customUserDetailsServices.checkMaxOtpTriesExceedThree(jWtrequest.get("email"))) {
+                emailServiceLayer.registerEmail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
+                        "Please confirm the email id using this OTP.");
+
+                getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"));
+
+                return (ResponseEntity.status(666).body(
+                        createOtpResponse(
+                                "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
+                                getOTP.getOperationId(), 0)));
+            }
+
+            if (getOTP.getOtp() == -1) {
+                emailServiceLayer.registerEmail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
+                        "Please confirm the email id using this OTP.");
+
+                return (ResponseEntity.status(666).body(
+                        createOtpResponse(
+                                "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
+                                getOTP.getOperationId(), 0)));
+            }
+
+            emailServiceLayer.sendPlainMail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
+                    "Please confirm the email id using this OTP " + getOTP.getOtp() + ".");
+
+            return (ResponseEntity.status(666).body(
+                    createOtpResponse(
+                            "Your account has not been confirmed yet.An email containing an otp has been send to your account. Please verify the otp.",
+                            getOTP.getOperationId(), 0)));
         }
 
         String generatedToken = jwtTokenProvider.generateToken(userDetails);
@@ -98,13 +108,21 @@ public class JwtController {
 
         int otp = Integer.parseInt(request.get("otp"));
 
+        // User user = userRepository.findByUserId(operationId);
+
+        System.out.println(operationId);
+
+        System.out.println(operation);
+
+        System.out.println(otp);
+
         if (!otpServiceLayer.verifyAccount(operation, otp, operationId)) {
             customUserDetailsServices.increaseOtpTries(operationId);
 
-            return (ResponseEntity.status(305).build());
+            return (ResponseEntity.status(305).body(createResponse("Incorrect OTP")));
         }
 
-        return (ResponseEntity.ok().build());
+        return (ResponseEntity.ok().body(createResponse("Account has been verified")));
     }
 
     @PostMapping("/adminLogin")

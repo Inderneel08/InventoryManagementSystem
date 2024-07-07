@@ -37,7 +37,7 @@ public class EmailServiceLayer {
 
         Otp otp = new Otp();
 
-        int randomNumber = 1000000 + random.nextInt(900000);
+        int randomNumber = 100000 + random.nextInt(90000);
 
         otp.setOtp(randomNumber);
         otp.setOperation(0);

@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React , { useEffect, useState } from 'react';
 import { MDBContainer, MDBCol, MDBRow, MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -39,7 +39,24 @@ function SignIn() {
   const handleClose = () => {
     setOtp('');
     setShowModal(false);
+    setIncorrectHits(0);
+    setOperation('');
+    setOperationId('');
+
+    Swal.fire({
+      icon:'warning',
+      text: "Incorrect OTP"
+    });
   };
+
+  useEffect(() =>{
+    if(incorrectHits===3){
+      handleClose();
+    }
+    else{
+      setOtp('');
+    }
+  },[incorrectHits]);
 
   const submitOtp = async() => {
     try {
@@ -51,38 +68,33 @@ function SignIn() {
 
         body: JSON.stringify({operation,operationId,otp}),
       });
+
+      const data = await response.json();
+
+      if(response.status===305){
+        setIncorrectHits(incorrectHits+1);
+      }
+      else if(response.ok){
+        Swal.fire({
+          icon:'success',
+          text: data.message,
+          didClose: ()=>{
+            setEmail('');
+            setPassword('');
+          }
+        });
+
+        setShowModal(false);
+
+        // document.getElementById('email').innerHTML='';
+        // document.getElementById('password').innerHTML='';
+      }
+
+      return ;
     } catch (error) {
       console.error('Otp Error:', error);
     }
 
-    const data = await response.json();
-
-    if(response.status==305){
-      if(incorrectHits==3){
-        handleClose();
-        setIncorrectHits(0);
-        setOperation('');
-        setOperationId('');
-
-        Swal.fire({
-          icon:'warning',
-          text: data.message
-        });
-
-        return ;
-      }
-
-      setIncorrectHits(incorrectHits+1);
-    }
-
-    setIncorrectHits(0);
-    setOperation('');
-    setOperationId('');
-
-    Swal.fire({
-      icon:'success',
-      text: data.message,
-    });
   }
 
   const validatePassword = (password) => {
@@ -147,11 +159,12 @@ function SignIn() {
           Swal.fire({
             icon:'info',
             text:data.responseOtp.message,
+            didClose : () =>{
+              setShowModal(true);
+              setOperationId(data.responseOtp.operationId);
+              setOperation(data.responseOtp.operation);
+            }
           });
-
-          setShowModal(true);
-          setOperationId(data.responseOtp.operationId);
-          setOperation(data.responseOtp.operation);
 
           return ;
         }
@@ -194,7 +207,7 @@ function SignIn() {
 
         <MDBCol col='4' md='6' style={{marginTop: '10vh' }}>
           <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' size="lg" onChange={(e) => setEmail(e.target.value)} />
-          <MDBInput wrapperClass='mb-4' label='Password' id='passsword' type='password' size="lg" onChange={(e) => setPassword(e.target.value)} />
+          <MDBInput wrapperClass='mb-4' label='Password' id='password' type='password' size="lg" onChange={(e) => setPassword(e.target.value)} />
 
           <div className='text-center text-md-start mt-4 pt-2'>
             <button className="m-3 btn btn-primary" size='xl' onClick={handleLogin}>Login</button>

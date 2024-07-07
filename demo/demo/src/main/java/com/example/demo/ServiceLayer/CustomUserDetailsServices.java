@@ -66,13 +66,21 @@ public class CustomUserDetailsServices implements UserDetailsService {
         User user = userRepository.findByUserId(userId);
 
         if (user.getIncorrectOtpTries() < 3) {
-
             userRepository.increaseOtpTries(userId);
+        }
+    }
 
-            return;
+    public boolean checkMaxOtpTriesExceedThree(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user.getIncorrectOtpTries() >= 3) {
+
+            userRepository.resetOtpTries(email);
+
+            return (true);
         }
 
-        return;
+        return (false);
     }
 
 }
