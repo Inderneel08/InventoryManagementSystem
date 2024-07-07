@@ -19,8 +19,10 @@ function Checkout()
     const [billingAddress,setBillingAddress] = useState('');
     const [shippingAddress,setShippingAddress] = useState('');
     const [cartItems,setCartItems] = useState([]);
+    const [totalAmount,setTotalAmount] = useState(0);
     const [netAmount,setNetAmount] = useState(0);
     const [pincode,setPincode] = useState('');
+    const [checkboxSelected,setCheckBoxSelected] = useState(false);
 
     const navigate = useNavigate();
 
@@ -29,6 +31,29 @@ function Checkout()
 
         if(!emailRegex.test(email)){
             return(false);
+        }
+
+        return(true);
+    }
+
+    const validateState = (state) => {
+        if(state===null || state===''){
+            return(false);
+        }
+
+        return(true);
+    }
+
+    const validateBillingAddressAndShippingAddress = (billingAddress,shippingAddress) => {
+        if(billingAddress===null || billingAddress==='' || shippingAddress==='' || shippingAddress===null){
+            return(false);
+        }
+        else{
+            if(checkboxSelected){
+                if(billingAddress!==shippingAddress){
+                    return(false);
+                }
+            }
         }
 
         return(true);
@@ -90,21 +115,46 @@ function Checkout()
 
         if(checkbox.checked){
             document.getElementById('shipping_address').value=document.getElementById('billing_address').value;
+            setCheckBoxSelected(true);
         }
         else{
             document.getElementById('shipping_address').value='';
+            setCheckBoxSelected(false);
         }
     }
 
+
+
     const checkout = async() =>{
+
+        if(!validateEmail(email)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address',
+            });
+
+            return ;
+        }
+
+        if(!validateState(state)){
+            Swal.fire({
+                icon: 'error',
+                title: 'The state dropdown cannot be empty!',
+                text: 'Please enter a valid state',
+            });
+
+          return ;
+        }
+
         try {
-            const response = await fetch("http://localhost:8080/adminLogin",{
+            const response = await fetch("http://localhost:8080/checkout",{
                 method:'POST',
                 headers:{
                     'Content-Type': 'application/json',
                 },
 
-                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,netAmount,pincode}),
+                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode}),
             });
         } catch (error) {
             console.error('Payment Error:', error);
@@ -165,6 +215,8 @@ function Checkout()
 
         setCartItems(JSON.parse(sessionStorage.getItem('cartItems')));
 
+        setTotalAmount(sessionStorage.getItem('totalCost'));
+
         setNetAmount(sessionStorage.getItem('totalCost')-sessionStorage.getItem('setDiscount'));
     },[]);
 
@@ -177,9 +229,9 @@ function Checkout()
 
                 <MDBRow>
                     <MDBCol col='10' md='6'>
-                        <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' size="lg" onChange={(e) => setEmail(e.target.value)} onBlur={onBlurEvent} />
+                        <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' size="lg" onChange={(e) => setEmail(e.target.value)} onBlur={onBlurEvent} required />
 
-                        <select name="state" id="state" className='form-control' onChange={(e) =>setState(e.target.value)}>
+                        <select name="state" id="state" className='form-control' onChange={(e) =>setState(e.target.value)} required>
                             <option value="">---Select State---</option>
                         </select>
             
@@ -190,16 +242,16 @@ function Checkout()
                         <br />
                         <br />
 
-                        <MDBInput wrapperClass='mb-4' label='Billing Address' id='billing_address' type='text' size="lg" onChange={(e) => setBillingAddress(e.target.value)} value={billingAddress} />
+                        <MDBInput wrapperClass='mb-4' label='Billing Address' id='billing_address' type='text' size="lg" onChange={(e) => setBillingAddress(e.target.value)} value={billingAddress} required />
 
                         <input type="checkbox" id="applyAddress" name="applyAddress" onClick={checkboxClicked} />
                         <label htmlFor="applyAddress">Shipping Address same as Billing Address</label>
                         <br />
                         <br />
 
-                        <MDBInput wrapperClass='mb-4' label='Shipping Address' id='shipping_address' type='text' size="lg" onChange={(e) => setShippingAddress(e.target.value)} value={shippingAddress} />
+                        <MDBInput wrapperClass='mb-4' label='Shipping Address' id='shipping_address' type='text' size="lg" onChange={(e) => setShippingAddress(e.target.value)} value={shippingAddress} required />
 
-                        <MDBInput wrapperClass='mb-4' label='Pincode' id='pincode' type='text' size="lg" onChange={(e) => setPincode(e.target.value)} value={pincode} />
+                        <MDBInput wrapperClass='mb-4' label='Pincode' id='pincode' type='text' size="lg" onChange={(e) => setPincode(e.target.value)} value={pincode} required />
                     </MDBCol>
 
                     <MDBCol col='4' md='6'>

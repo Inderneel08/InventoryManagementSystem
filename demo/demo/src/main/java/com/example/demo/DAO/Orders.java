@@ -1,6 +1,8 @@
 package com.example.demo.DAO;
 
 import java.math.BigInteger;
+import java.time.Year;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,4 +30,7 @@ public class Orders {
 
     @Column(name = "orderId")
     private String orderId;
+
+    @Column(name = "year")
+    private Year year;
 }
