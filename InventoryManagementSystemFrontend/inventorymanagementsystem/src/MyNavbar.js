@@ -170,7 +170,7 @@ const CustomNavbar = () => {
 
                                     <Nav.Link as={Link} to="shoppingCart" onClick={changeShoppingCartModal}>
                                         <img src="/cart-shopping-solid.svg" alt="shoppingCart"  style={{ height:'30px', width:'30px'}}/>
-                                        <a href="" style={{ color:'black' }}>Hello</a>
+                                        {/* <a href="" style={{ color:'black' }}>Hello</a> */}
                                     </Nav.Link>
                                 </>
                             )}

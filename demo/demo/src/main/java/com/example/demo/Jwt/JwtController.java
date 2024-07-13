@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.DAO.OperationIdOTP;
 import com.example.demo.DAO.ResponseOtp;
-import com.example.demo.DAO.User;
 import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 import com.example.demo.ServiceLayer.EmailServiceLayer;
 import com.example.demo.ServiceLayer.OtpServiceLayer;
@@ -64,7 +63,7 @@ public class JwtController {
 
             if (customUserDetailsServices.checkMaxOtpTriesExceedThree(jWtrequest.get("email"))) {
                 emailServiceLayer.registerEmail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
-                        "Please confirm the email id using this OTP.");
+                        "Please confirm the email id using this OTP.", 0);
 
                 getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"));
 
@@ -76,7 +75,7 @@ public class JwtController {
 
             if (getOTP.getOtp() == -1) {
                 emailServiceLayer.registerEmail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
-                        "Please confirm the email id using this OTP.");
+                        "Please confirm the email id using this OTP.", 0);
 
                 return (ResponseEntity.status(666).body(
                         createOtpResponse(

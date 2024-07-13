@@ -1,6 +1,8 @@
 package com.example.demo.ServiceLayer;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,14 @@ public class OtpServiceLayer implements OtpInterface {
         otpRepository.save(otp);
 
         return (true);
+    }
+
+    public boolean validateOtpForCheckout(int operation, int otp, BigInteger operationId) {
+        if (otpRepository.findByOperationIdOperationAndOtp(operation, operationId, otp) != null) {
+            return (true);
+        }
+
+        return (false);
     }
 
     public boolean verifyAccount(int operation, int otp, BigInteger operationId) {

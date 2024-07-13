@@ -32,7 +32,7 @@ public class EmailAspect {
                 String subject = "Registration Successful";
                 String text = "Registration has been successfull use this OTP to confirm the email id ";
 
-                emailServiceLayer.registerEmail(extractedEmail, subject, text);
+                emailServiceLayer.registerEmail(extractedEmail, subject, text,0);
             }
         }
 

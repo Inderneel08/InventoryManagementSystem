@@ -78,10 +78,6 @@ function SignIn() {
         Swal.fire({
           icon:'success',
           text: data.message,
-          didClose: ()=>{
-            setEmail('');
-            setPassword('');
-          }
         });
 
         setShowModal(false);
@@ -225,7 +221,7 @@ function SignIn() {
         </MDBCol>
       </MDBRow>
 
-      <Modal show={showModal} onHide={handleClose} backdrop="static" keyboard={false}>
+      <Modal show={showModal} onHide={handleClose} backdrop="static" keyboard={false} size='lg'>
         <Modal.Header closeButton>
           <Modal.Title>Enter OTP</Modal.Title>
         </Modal.Header>
@@ -234,7 +230,7 @@ function SignIn() {
             <OtpInput
               value={otp}
               onChange={setOtp}
-              numInputs={6}
+              numInputs={9}
               separator={<span />} // Use an empty span for separator
               isInputNum={true} // If your OTP consists only of numbers
               inputStyle={otpInputStyle}

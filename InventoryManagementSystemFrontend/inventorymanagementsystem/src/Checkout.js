@@ -23,6 +23,7 @@ function Checkout()
     const [netAmount,setNetAmount] = useState(0);
     const [pincode,setPincode] = useState('');
     const [checkboxSelected,setCheckBoxSelected] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const navigate = useNavigate();
 
@@ -35,6 +36,20 @@ function Checkout()
 
         return(true);
     }
+
+    const otpInputStyle = {
+        width: '50px', // Adjust width and height to make the input square
+        height: '50px',
+        margin: '0 5px',
+        fontSize: '24px',
+        borderRadius: '5px',
+        border: '1px solid #ccc',
+        textAlign: 'center',
+    };
+
+    const renderInput = (inputProps, index) => (
+        <input {...inputProps} key={index} style={otpInputStyle} />
+    );
 
     const validateState = (state) => {
         if(state===null || state===''){
@@ -54,6 +69,14 @@ function Checkout()
                     return(false);
                 }
             }
+        }
+
+        return(true);
+    }
+
+    const validatePincode = (pincode) => {
+        if(pincode===null || pincode===''){
+            return(false);
         }
 
         return(true);
@@ -115,17 +138,41 @@ function Checkout()
 
         if(checkbox.checked){
             document.getElementById('shipping_address').value=document.getElementById('billing_address').value;
-            setCheckBoxSelected(true);
+            // setCheckBoxSelected(true);
         }
         else{
             document.getElementById('shipping_address').value='';
-            setCheckBoxSelected(false);
+            // setCheckBoxSelected(false);
+        }
+    }
+
+    const checkout = async() =>{
+        if(!validateEmail(email)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address',
+            });
+
+            return ;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/checkout",{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({email}),
+            });
+        } catch (error) {
+            console.error('Otp confirmation error:', error);
         }
     }
 
 
-
-    const checkout = async() =>{
+    const confirmOrder = async() =>{
 
         if(!validateEmail(email)){
             Swal.fire({
@@ -147,6 +194,24 @@ function Checkout()
           return ;
         }
 
+        if(!validateBillingAddressAndShippingAddress(billingAddress,shippingAddress)){
+            Swal.fire({
+                icon:'error',
+                text:'Incorrect Billing or Shipping Address',
+            });
+
+            return ;
+        }
+
+        if(!validatePincode(pincode)){
+            Swal.fire({
+                error:'error',
+                text:'Incorrect pincode',
+            });
+
+            return ;
+        }
+
         try {
             const response = await fetch("http://localhost:8080/checkout",{
                 method:'POST',
@@ -156,54 +221,10 @@ function Checkout()
 
                 body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode}),
             });
+
         } catch (error) {
             console.error('Payment Error:', error);
         }
-        // try {
-        //     const response = await fetch("http://localhost:8080/adminLogin",{
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-    
-        //     body: JSON.stringify({email,state,billingAddress,shippingAddress}),
-        //     });
-    
-        //     const data = await response.json();
-            
-        //     if(response.status===400){
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: "Error",
-        //         text: data.message
-        //     });
-
-        //     return ;
-        //     }
-
-        //     console.log(data);
-    
-        //     const token = data.token;
-        //     const emailrecieved = data.email;
-        //     const role = data.role;
-
-        //     sessionStorage.setItem('token', token);
-        //     sessionStorage.setItem('emailrecieved',emailrecieved);
-        //     sessionStorage.setItem('role',role);
-
-        //     setShowModal(false);
-
-        //         Swal.fire({
-        //         icon: 'success',
-        //         title: 'Success',
-        //         text: 'Login Successfull',
-        //         didClose: () => {
-        //             navigate('/');
-        //         }
-        //         });
-        // } catch (error) {
-        //     console.error('Sign-in error:', error);
-        // }
     }
 
     const handleSelect = (e) => {
@@ -281,6 +302,34 @@ function Checkout()
 
                     </MDBCol>
                 </MDBRow>
+
+                <Modal show={showModal} onHide={handleClose} backdrop="static" keyboard={false} size='lg'>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Enter OTP</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+                            <OtpInput
+                            value={otp}
+                            onChange={setOtp}
+                            numInputs={9}
+                            separator={<span />} // Use an empty span for separator
+                            isInputNum={true} // If your OTP consists only of numbers
+                            inputStyle={otpInputStyle}
+                            renderInput={renderInput}
+                            />
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <div className="d-flex justify-content-between w-100">
+                            <Button variant="primary" onClick={submitOtp}>Submit</Button>
+                            <Button variant="secondary" onClick={handleClose}>Close</Button>
+                        </div>
+                    </Modal.Footer>
+
+                </Modal>
 
                 <Button variant="dark" className='submit' onClick={checkout}>Place Order</Button>
             </MDBContainer>

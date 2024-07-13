@@ -28,7 +28,7 @@ public class EmailServiceLayer {
     @Value("${spring.mail.username}")
     private String sender;
 
-    public void registerEmail(String to, String subject, String text) {
+    public void registerEmail(String to, String subject, String text, int operation) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         Random random = new Random();
@@ -37,10 +37,10 @@ public class EmailServiceLayer {
 
         Otp otp = new Otp();
 
-        int randomNumber = 100000 + random.nextInt(90000);
+        int randomNumber = 100000000 + random.nextInt(900000000);
 
         otp.setOtp(randomNumber);
-        otp.setOperation(0);
+        otp.setOperation(operation);
         otp.setDate(Date.valueOf(LocalDate.now()));
         otp.setOperationId(user.getId());
 
@@ -54,7 +54,6 @@ public class EmailServiceLayer {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text + String.valueOf(randomNumber) + ".");
-
         mailSender.send(message);
     }
 

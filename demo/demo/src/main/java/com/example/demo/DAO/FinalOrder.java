@@ -1,12 +1,11 @@
 package com.example.demo.DAO;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,12 +34,12 @@ public class FinalOrder {
     @Column(name = "pincode")
     private String pincode;
 
-    @Column(name = "otp")
-    private int otp;
-
     @Column(name = "date")
     private LocalDateTime date;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "operationId")
+    private BigInteger operationId;
+
+    @Column(name = "netAmount")
+    private double netAmount;
 }
