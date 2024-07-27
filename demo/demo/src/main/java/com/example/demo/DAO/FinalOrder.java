@@ -1,7 +1,7 @@
 package com.example.demo.DAO;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,11 +35,14 @@ public class FinalOrder {
     private String pincode;
 
     @Column(name = "date")
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(name = "operationId")
     private BigInteger operationId;
 
     @Column(name = "netAmount")
-    private double netAmount;
+    private Double netAmount;
+
+    @Column(name = "email")
+    private String email;
 }

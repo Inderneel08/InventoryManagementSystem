@@ -10,6 +10,7 @@ import Modal from 'react-bootstrap/Modal';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
+import OtpInput from 'react-otp-input';
 
 
 function Checkout()
@@ -22,8 +23,10 @@ function Checkout()
     const [totalAmount,setTotalAmount] = useState(0);
     const [netAmount,setNetAmount] = useState(0);
     const [pincode,setPincode] = useState('');
-    const [checkboxSelected,setCheckBoxSelected] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [otp,setOtp] = useState('');
+    const [operationId,setOperationId] = useState(0);
+    const [operation,setOperation] = useState(0);
 
     const navigate = useNavigate();
 
@@ -62,13 +65,6 @@ function Checkout()
     const validateBillingAddressAndShippingAddress = (billingAddress,shippingAddress) => {
         if(billingAddress===null || billingAddress==='' || shippingAddress==='' || shippingAddress===null){
             return(false);
-        }
-        else{
-            if(checkboxSelected){
-                if(billingAddress!==shippingAddress){
-                    return(false);
-                }
-            }
         }
 
         return(true);
@@ -137,13 +133,17 @@ function Checkout()
         const checkbox = document.getElementById('applyAddress');
 
         if(checkbox.checked){
-            document.getElementById('shipping_address').value=document.getElementById('billing_address').value;
-            // setCheckBoxSelected(true);
+            setShippingAddress(billingAddress);
+            console.log("Checked");
         }
         else{
-            document.getElementById('shipping_address').value='';
-            // setCheckBoxSelected(false);
+            setShippingAddress('');
+            console.log("UnChecked");
         }
+    }
+
+    const handleClose = async() => {
+        setShowModal(false);
     }
 
     const checkout = async() =>{
@@ -166,11 +166,25 @@ function Checkout()
 
                 body: JSON.stringify({email}),
             });
+
+            const data = response.json();
+
+            if(response.ok){
+                Swal.fire({
+                    icon:'info',
+                    text:data.responseOtp.message,
+                    didClose:()=>{
+                        setShowModal(true);
+                        setOperationId(data.responseOtp.operationId);
+                        setOperation(data.responseOtp.operation);
+                    }
+                });
+            }
+
         } catch (error) {
             console.error('Otp confirmation error:', error);
         }
     }
-
 
     const confirmOrder = async() =>{
 
@@ -213,23 +227,51 @@ function Checkout()
         }
 
         try {
-            const response = await fetch("http://localhost:8080/checkout",{
+            const response = await fetch("http://localhost:8080/confirmOrder",{
                 method:'POST',
                 headers:{
                     'Content-Type': 'application/json',
                 },
 
-                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode}),
+                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation,operationId,otp}),
             });
+
+            if(response.ok()){
+                Swal.fire({
+                    icon:'success',
+                    text:'Transaction Successful',
+
+                    didClose : () => {
+                        setOperation('');
+                        setOperationId('');
+                        setOtp('');
+                        setShowModal(false);
+                    }
+                });
+
+                return ;
+            }
+            else{
+                Swal.fire({
+                    icon:'error',
+                    text:'Transaction Failed',
+
+                    didClose : ()=>{
+                        setOperation('');
+                        setOperationId('');
+                        setOtp('');
+                        setShowModal(false);
+                        navigate('/');
+                    }
+                });
+
+                return ;
+            }
 
         } catch (error) {
             console.error('Payment Error:', error);
         }
     }
-
-    const handleSelect = (e) => {
-        setState(e.target.getAttribute('data-value'));
-    };
 
     useEffect(() => {
         fetchStateLists();
@@ -267,6 +309,7 @@ function Checkout()
 
                         <input type="checkbox" id="applyAddress" name="applyAddress" onClick={checkboxClicked} />
                         <label htmlFor="applyAddress">Shipping Address same as Billing Address</label>
+
                         <br />
                         <br />
 
@@ -324,7 +367,7 @@ function Checkout()
 
                     <Modal.Footer>
                         <div className="d-flex justify-content-between w-100">
-                            <Button variant="primary" onClick={submitOtp}>Submit</Button>
+                            <Button variant="primary" onClick={confirmOrder}>Submit</Button>
                             <Button variant="secondary" onClick={handleClose}>Close</Button>
                         </div>
                     </Modal.Footer>

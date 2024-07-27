@@ -16,6 +16,7 @@ import CreateProducts from './CreateProducts';
 import ShowProducts from './ShowProducts';
 import Checkout from './Checkout';
 import OtpModal from './OtpModal';
+import Transaction from './Transaction';
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
               <Route path="createProducts" element={<CreateProducts />}></Route>
               <Route path="checkout" element={<Checkout /> }></Route>
               <Route path="showOtpForm" element={<OtpModal />}></Route>
+              <Route path="transaction/:orderId" element={<Transaction />}></Route>
               <Route path="category">
                 <Route path="edibles" element={<Home />}></Route>
                 <Route path="consumerDurables" element={<Home />}></Route>

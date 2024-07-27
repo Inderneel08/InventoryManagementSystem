@@ -59,13 +59,13 @@ public class JwtController {
         }
 
         if (!customUserDetailsServices.checkVerifiedStatus(jWtrequest.get("email"))) {
-            OperationIdOTP getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"));
+            OperationIdOTP getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"), 0);
 
             if (customUserDetailsServices.checkMaxOtpTriesExceedThree(jWtrequest.get("email"))) {
                 emailServiceLayer.registerEmail(jWtrequest.get("email"), "Confirm OTP for registering into account.",
                         "Please confirm the email id using this OTP.", 0);
 
-                getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"));
+                getOTP = customUserDetailsServices.findOtpByEmail(jWtrequest.get("email"), 0);
 
                 return (ResponseEntity.status(666).body(
                         createOtpResponse(
@@ -106,14 +106,6 @@ public class JwtController {
         int operation = Integer.parseInt(request.get("operation"));
 
         int otp = Integer.parseInt(request.get("otp"));
-
-        // User user = userRepository.findByUserId(operationId);
-
-        System.out.println(operationId);
-
-        System.out.println(operation);
-
-        System.out.println(otp);
 
         if (!otpServiceLayer.verifyAccount(operation, otp, operationId)) {
             customUserDetailsServices.increaseOtpTries(operationId);

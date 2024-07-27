@@ -43,10 +43,16 @@ public class CustomUserDetailsServices implements UserDetailsService {
         return (true);
     }
 
-    public OperationIdOTP findOtpByEmail(String email) {
+    public OperationIdOTP findOtpByEmail(String email, int operation) {
         User user = userRepository.findByEmail(email);
 
-        Otp otp = otpRepository.findByOperationIdAndOperation(user.getId(), 0);
+        Otp otp = null;
+
+        if (user == null) {
+            otp = otpRepository.findByOperationIdAndOperation(BigInteger.ZERO, operation);
+        } else {
+            otp = otpRepository.findByOperationIdAndOperation(user.getId(), operation);
+        }
 
         OperationIdOTP operationIdOTP = new OperationIdOTP();
 
@@ -57,7 +63,12 @@ public class CustomUserDetailsServices implements UserDetailsService {
         }
 
         operationIdOTP.setOtp(otp.getOtp());
-        operationIdOTP.setOperationId(user.getId());
+
+        if (user == null) {
+            operationIdOTP.setOperationId(BigInteger.ZERO);
+        } else {
+            operationIdOTP.setOperationId(user.getId());
+        }
 
         return (operationIdOTP);
     }

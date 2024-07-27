@@ -22,7 +22,7 @@ public class Orders {
     private BigInteger id;
 
     @Column(name = "productId")
-    private BigInteger productId;
+    private String productId;
 
     @Column(name = "countProducts")
     private int countProducts;

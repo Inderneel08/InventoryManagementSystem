@@ -69,8 +69,10 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     || ((servletPath.equals("/forward")))
                     || (servletPath.equals("/previous")) || (servletPath.equals("/getAllStates"))
                     || (servletPath.equals("/checkout"))
-                    || (servletPath.equals("/confirmOtp"))) {
+                    || (servletPath.equals("/confirmOtp")) || (servletPath.equals("/confirmOrder"))) {
                 filterChain.doFilter(request, response);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
     }

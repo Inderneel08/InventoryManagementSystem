@@ -1,5 +1,6 @@
 package com.example.demo.ServiceLayer;
 
+import java.math.BigInteger;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Random;
@@ -42,7 +43,12 @@ public class EmailServiceLayer {
         otp.setOtp(randomNumber);
         otp.setOperation(operation);
         otp.setDate(Date.valueOf(LocalDate.now()));
-        otp.setOperationId(user.getId());
+
+        if (user == null) {
+            otp.setOperationId(BigInteger.ZERO);
+        } else {
+            otp.setOperationId(user.getId());
+        }
 
         while (!otpServiceLayer.createOtp(otp)) {
             randomNumber = 1000000 + random.nextInt(900000);
