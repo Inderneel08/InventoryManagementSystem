@@ -27,6 +27,60 @@ function Checkout()
     const [otp,setOtp] = useState('');
     const [operationId,setOperationId] = useState(0);
     const [operation,setOperation] = useState(0);
+    const [token,setToken]  = useState('');
+    const [emailrecieved,setEmailRecieved] = useState('');
+    const [role,setRole] = useState('');
+
+    useEffect(() => {
+        fetchStateLists();
+
+        setCartItems(JSON.parse(sessionStorage.getItem('cartItems')));
+
+        setTotalAmount(parseFloat(sessionStorage.getItem('totalCost')));
+
+        setNetAmount(parseFloat(sessionStorage.getItem('totalCost'))- parseFloat(sessionStorage.getItem('setDiscount')));
+
+        setToken(sessionStorage.getItem('token'));
+
+        setEmailRecieved(sessionStorage.getItem('emailrecieved'));
+
+        setRole(sessionStorage.getItem('role'));
+    },[]);
+
+
+    function clearTransactionRelatedDetails(success)
+    {
+        setShowModal(false);
+        setOtp('');
+        setOperation('');
+        setOperationId('');
+
+        if(success===true){
+            setEmail('');
+
+            setState('');
+
+            setBillingAddress('');
+
+            setShippingAddress('');
+
+            setTotalAmount('');
+
+            setNetAmount('');
+
+            setPincode('');
+
+            setCartItems([]);
+
+            sessionStorage.clear();
+
+            sessionStorage.setItem('token', token);
+
+            sessionStorage.setItem('emailrecieved', emailrecieved);
+            
+            sessionStorage.setItem('role',role);
+        }
+    }
 
     const navigate = useNavigate();
 
@@ -167,7 +221,9 @@ function Checkout()
                 body: JSON.stringify({email}),
             });
 
-            const data = response.json();
+            const data = await response.json();
+
+            console.log(data);
 
             if(response.ok){
                 Swal.fire({
@@ -236,16 +292,15 @@ function Checkout()
                 body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation,operationId,otp}),
             });
 
-            if(response.ok()){
+            if(response.ok){
                 Swal.fire({
                     icon:'success',
                     text:'Transaction Successful',
 
                     didClose : () => {
-                        setOperation('');
-                        setOperationId('');
-                        setOtp('');
-                        setShowModal(false);
+                        clearTransactionRelatedDetails(true);
+
+                        navigate('/');
                     }
                 });
 
@@ -257,10 +312,8 @@ function Checkout()
                     text:'Transaction Failed',
 
                     didClose : ()=>{
-                        setOperation('');
-                        setOperationId('');
-                        setOtp('');
-                        setShowModal(false);
+                        clearTransactionRelatedDetails(false);
+
                         navigate('/');
                     }
                 });
@@ -272,17 +325,6 @@ function Checkout()
             console.error('Payment Error:', error);
         }
     }
-
-    useEffect(() => {
-        fetchStateLists();
-
-        setCartItems(JSON.parse(sessionStorage.getItem('cartItems')));
-
-        setTotalAmount(sessionStorage.getItem('totalCost'));
-
-        setNetAmount(sessionStorage.getItem('totalCost')-sessionStorage.getItem('setDiscount'));
-    },[]);
-
 
     return(
         <>
@@ -333,7 +375,7 @@ function Checkout()
 
                         <br />
 
-                        <h5>Total Amount  Rs({sessionStorage.getItem('totalCost')})</h5>
+                        <h5>Total Amount  Rs({totalAmount})</h5>
                         
                         <br />
 

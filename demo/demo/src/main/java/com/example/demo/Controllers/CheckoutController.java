@@ -55,17 +55,17 @@ public class CheckoutController {
 
         List<Object> cartItems = (List<Object>) request.get("cartItems");
 
-        Double totalAmount = (Double) request.get("totalAmount");
+        Double totalAmount = (Double) (request.get("totalAmount"));
 
-        Double netAmount = (Double) request.get("netAmount");
+        Double netAmount = (Double) (request.get("netAmount"));
 
         String pincode = (String) request.get("pincode");
 
-        int otp = (int) request.get("otp");
+        Integer otp = (Integer.parseInt((String) request.get("otp")));
 
         BigInteger operationId = (BigInteger) request.get("operationId");
 
-        int operation = (int) request.get("operation");
+        Integer operation = (Integer.parseInt((String) request.get("operation")));
 
         // Incorrect OTP.
         if (!otpServiceLayer.validateOtpForCheckout(operation, otp, operationId)) {
@@ -109,7 +109,7 @@ public class CheckoutController {
 
         checkoutServiceLayer.sendOtpForOrder(email);
 
-        OperationIdOTP getOTP = customUserDetailsServices.findOtpByEmail(email,1);
+        OperationIdOTP getOTP = customUserDetailsServices.findOtpByEmail(email, 1);
 
         return (ResponseEntity.ok().body(createOtpResponse(
                 "Please confirm the OTP send on your mail to proceed with the transaction.", getOTP.getOperationId(),
