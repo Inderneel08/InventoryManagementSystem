@@ -211,6 +211,34 @@ function Checkout()
             return ;
         }
 
+        if(!validateState(state)){
+            Swal.fire({
+                icon: 'error',
+                title: 'The state dropdown cannot be empty!',
+                text: 'Please enter a valid state',
+            });
+
+          return ;
+        }
+
+        if(!validateBillingAddressAndShippingAddress(billingAddress,shippingAddress)){
+            Swal.fire({
+                icon:'error',
+                text:'Incorrect Billing or Shipping Address',
+            });
+
+            return ;
+        }
+
+        if(!validatePincode(pincode)){
+            Swal.fire({
+                error:'error',
+                text:'Incorrect pincode',
+            });
+
+            return ;
+        }
+
         try {
             const response = await fetch("http://localhost:8080/checkout",{
                 method:'POST',
@@ -244,44 +272,6 @@ function Checkout()
 
     const confirmOrder = async() =>{
 
-        if(!validateEmail(email)){
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Email',
-                text: 'Please enter a valid email address',
-            });
-
-            return ;
-        }
-
-        if(!validateState(state)){
-            Swal.fire({
-                icon: 'error',
-                title: 'The state dropdown cannot be empty!',
-                text: 'Please enter a valid state',
-            });
-
-          return ;
-        }
-
-        if(!validateBillingAddressAndShippingAddress(billingAddress,shippingAddress)){
-            Swal.fire({
-                icon:'error',
-                text:'Incorrect Billing or Shipping Address',
-            });
-
-            return ;
-        }
-
-        if(!validatePincode(pincode)){
-            Swal.fire({
-                error:'error',
-                text:'Incorrect pincode',
-            });
-
-            return ;
-        }
-
         try {
             const response = await fetch("http://localhost:8080/confirmOrder",{
                 method:'POST',
@@ -289,7 +279,7 @@ function Checkout()
                     'Content-Type': 'application/json',
                 },
 
-                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation,operationId,otp}),
+                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation,operationId:operationId.toString(),otp}),
             });
 
             if(response.ok){
