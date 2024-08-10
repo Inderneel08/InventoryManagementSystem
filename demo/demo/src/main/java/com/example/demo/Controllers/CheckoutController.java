@@ -3,7 +3,9 @@ package com.example.demo.Controllers;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 import com.example.demo.ServiceLayer.FinalOrderServiceLayer;
 import com.example.demo.ServiceLayer.OrderServiceLayer;
 import com.example.demo.ServiceLayer.OtpServiceLayer;
+import com.example.demo.ServiceLayer.ProductServiceLayer;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
@@ -42,6 +45,9 @@ public class CheckoutController {
     @Autowired
     private CustomUserDetailsServices customUserDetailsServices;
 
+    @Autowired
+    private ProductServiceLayer productServiceLayer;
+
     @PostMapping("/confirmOrder")
     public ResponseEntity<?> reviewOtpForOrdering(@RequestBody Map<String, Object> request) {
         String email = (String) request.get("email");
@@ -52,7 +58,8 @@ public class CheckoutController {
 
         String shippingAddress = (String) request.get("shippingAddress");
 
-        List<Object> cartItems = (List<Object>) request.get("cartItems");
+        ArrayList<LinkedHashMap<String, Object>> cartItems = (ArrayList<LinkedHashMap<String, Object>>) request
+                .get("cartItems");
 
         Double totalAmount = (Double) (request.get("totalAmount"));
 
@@ -62,7 +69,7 @@ public class CheckoutController {
 
         Integer otp = (Integer.parseInt((String) request.get("otp")));
 
-        BigInteger operationId = (BigInteger) request.get("operationId");
+        BigInteger operationId = new BigInteger((String) request.get("operationId"));
 
         Integer operation = (Integer.parseInt((String) request.get("operation")));
 
@@ -73,13 +80,30 @@ public class CheckoutController {
 
         String orderId = finalOrderServiceLayer.createFinalOrder();
 
-        finalOrderServiceLayer.createOrder(orderId, totalAmount, netAmount, pincode, operationId, email, state,
+        finalOrderServiceLayer.createOrder(orderId, totalAmount, netAmount, pincode,
+                operationId, email, state,
                 billingAddress, shippingAddress);
 
-        for (Object item : cartItems) {
-            Orders orders = new Orders();
+        for (int i = 0; i < cartItems.size(); i++) {
+            LinkedHashMap<String, Object> item = cartItems.get(i);
 
-            CartItem cartItem = (CartItem) item;
+            CartItem cartItem = new CartItem();
+
+            cartItem.setCount((Integer) item.get("count"));
+
+            cartItem.setPath((String) item.get("path"));
+
+            if (item.get("pricePerItem") instanceof Double) {
+                cartItem.setPricePerItem((Double) item.get("pricePerItem"));
+            } else if (item.get("pricePerItem") instanceof Integer) {
+                cartItem.setPricePerItem(((Integer) item.get("pricePerItem")).doubleValue());
+            }
+
+            cartItem.setProductName((String) item.get("productName"));
+
+            cartItem.setProductId(productServiceLayer.productId(BigInteger.valueOf((Integer) item.get("productId"))));
+
+            Orders orders = new Orders();
 
             orders.setOrderId(orderId);
 
@@ -94,11 +118,11 @@ public class CheckoutController {
             } catch (Exception e) {
                 e.printStackTrace();
 
-                return (ResponseEntity.badRequest().body(createResponse("Order could not be confirmed")));
+                return (ResponseEntity.badRequest().body(createResponse("Transaction failed.")));
             }
         }
 
-        return (ResponseEntity.ok().body(createResponse("Order confirmed")));
+        return (ResponseEntity.ok().body(createResponse("Transaction successful."+"Please note the order id of your transaction "+orderId+".")));
     }
 
     @PostMapping("/checkout")

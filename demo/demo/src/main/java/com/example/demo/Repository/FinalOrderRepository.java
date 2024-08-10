@@ -8,6 +8,6 @@ import com.example.demo.DAO.FinalOrder;
 @Repository
 public interface FinalOrderRepository extends JpaRepository<FinalOrder, String> {
 
-    @Query(value = "SELECT * FROM finalorder where finalorder.orderId = :orderId where finalorder.date = CURRENT_DATE", nativeQuery = true)
+    @Query(value = "SELECT * FROM finalorder WHERE finalorder.orderId = :orderId AND finalorder.date = CURRENT_DATE", nativeQuery = true)
     FinalOrder fetchOrderByOrderId(String orderId);
 }

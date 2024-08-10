@@ -28,6 +28,12 @@ public class ProductServiceLayer implements ProductInterface {
         return (true);
     }
 
+    public String productId(BigInteger id) {
+        Product productId = productRepository.findStringByProductId(id);
+
+        return(productId.getProductId());
+    }
+
     @Override
     public List<Product> getAllProducts() {
         return (productRepository.findProductsUsingLimit());
@@ -35,12 +41,12 @@ public class ProductServiceLayer implements ProductInterface {
 
     @Override
     public List<Product> backProducts(BigInteger id) {
-        return(productRepository.findBackProducts(id));
+        return (productRepository.findBackProducts(id));
     }
 
     @Override
     public List<Product> fowardProducts(BigInteger id) {
-        return(productRepository.findForwardProducts(id));
+        return (productRepository.findForwardProducts(id));
     }
 
 }

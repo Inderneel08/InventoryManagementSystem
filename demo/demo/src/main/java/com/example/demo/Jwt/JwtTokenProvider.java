@@ -52,6 +52,7 @@ public class JwtTokenProvider {
     }
 
     public Boolean isTokenExpired(String token) {
+        // System.out.println("Token: -> " + token);
         final Date expiration = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getExpiration();
 
         return (expiration.before(new Date()));

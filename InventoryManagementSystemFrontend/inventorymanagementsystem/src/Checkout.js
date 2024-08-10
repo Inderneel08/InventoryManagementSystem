@@ -279,13 +279,15 @@ function Checkout()
                     'Content-Type': 'application/json',
                 },
 
-                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation,operationId:operationId.toString(),otp}),
+                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation:operation.toString(),operationId:operationId.toString(),otp}),
             });
+
+            const data = await response.json();
 
             if(response.ok){
                 Swal.fire({
                     icon:'success',
-                    text:'Transaction Successful',
+                    text:data.message,
 
                     didClose : () => {
                         clearTransactionRelatedDetails(true);
@@ -299,7 +301,7 @@ function Checkout()
             else{
                 Swal.fire({
                     icon:'error',
-                    text:'Transaction Failed',
+                    text:data.message,
 
                     didClose : ()=>{
                         clearTransactionRelatedDetails(false);

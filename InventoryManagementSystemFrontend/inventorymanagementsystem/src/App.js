@@ -16,7 +16,7 @@ import CreateProducts from './CreateProducts';
 import ShowProducts from './ShowProducts';
 import Checkout from './Checkout';
 import OtpModal from './OtpModal';
-import Transaction from './Transaction';
+import TransactionDetails from './TransactionDetails';
 
 function App() {
 
@@ -36,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/"               element={<ProtectedRoute> <MyNavbar/> </ProtectedRoute>} >
               <Route path="products"    element={<ShowProducts />}></Route>
+              <Route path="inquiry"     element={<TransactionDetails />}></Route>
               <Route path="signIn"      element={<SignIn />}></Route>
               <Route path="register"    element={<Register />}></Route>
               <Route path="contact"     element={<Contact />}></Route>
@@ -45,7 +46,7 @@ function App() {
               <Route path="createProducts" element={<CreateProducts />}></Route>
               <Route path="checkout" element={<Checkout /> }></Route>
               <Route path="showOtpForm" element={<OtpModal />}></Route>
-              <Route path="transaction/:orderId" element={<Transaction />}></Route>
+              <Route path="transaction/:orderId" element={<TransactionDetails />}></Route>
               <Route path="category">
                 <Route path="edibles" element={<Home />}></Route>
                 <Route path="consumerDurables" element={<Home />}></Route>

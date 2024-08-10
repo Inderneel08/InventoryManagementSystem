@@ -58,7 +58,7 @@ public class FinalOrderServiceLayer {
     public String createFinalOrder() {
         String createOrderId = generatedOrderId();
 
-        while (finalOrderRepository.fetchOrderByOrderId(createOrderId) == null) {
+        while (finalOrderRepository.fetchOrderByOrderId(createOrderId) != null) {
             createOrderId = generatedOrderId();
         }
 
@@ -91,5 +91,7 @@ public class FinalOrderServiceLayer {
 
         finalOrderRepository.save(finalOrder);
     }
+
+    public 
 
 }

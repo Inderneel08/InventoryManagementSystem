@@ -69,7 +69,7 @@ const ProtectedRoute = ({ children }) => {
   if(isAuthenticated === true){
 
     if(location.pathname === '/signIn' || location.pathname === '/register' || location.pathname === '/adminLogin'){
-      var newRedirectLink = '/';
+      let newRedirectLink = '/';
 
       if(jwtToken==null){
         newRedirectLink=location.pathname;
@@ -79,6 +79,15 @@ const ProtectedRoute = ({ children }) => {
 
       return(<Navigate to={newRedirectLink} replace/>);
     }
+    else if(location.pathname === '/inquiry'){
+      let newRedirectLink = '/';
+
+      if(jwtToken!=null){
+        newRedirectLink=location.pathname;
+      }
+
+      return(<Navigate to={newRedirectLink} />);
+    }
 
     console.log("This one");
 
@@ -86,7 +95,7 @@ const ProtectedRoute = ({ children }) => {
   }
   else{
 
-    if(location.pathname === '/' || location.pathname === '/products' || location.pathname === '/signIn' || location.pathname === '/register' || location.pathname === '/adminLogin' || location.pathname === '/contact' || location.pathname === '/shoppingCart' || location.pathname === '/checkout' || location.pathname === '/showOtpForm' || location.pathname === '/transaction'){
+    if(location.pathname === '/' || location.pathname === '/products' || location.pathname === '/signIn' || location.pathname === '/register' || location.pathname === '/adminLogin' || location.pathname === '/contact' || location.pathname === '/shoppingCart' || location.pathname === '/checkout' || location.pathname === '/showOtpForm' || location.pathname === '/inquiry'){
       return children;
     }
 

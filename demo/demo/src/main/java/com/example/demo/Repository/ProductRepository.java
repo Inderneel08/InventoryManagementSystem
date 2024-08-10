@@ -23,4 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, BigInteger> {
     @Query(value = "SELECT * FROM products p where p.id > :id  LIMIT 12", nativeQuery = true)
     List<Product> findForwardProducts(@Param("id") BigInteger id);
 
+    @Query(value = "SELECT * FROM products p where p.id = :id", nativeQuery = true)
+    Product findStringByProductId(@Param("id") BigInteger id);
 }

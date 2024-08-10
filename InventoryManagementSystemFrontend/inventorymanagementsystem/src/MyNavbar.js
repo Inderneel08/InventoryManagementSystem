@@ -200,6 +200,8 @@ const CustomNavbar = () => {
                     <>
                         <Navbar.Brand as={Link} to="products">All Products</Navbar.Brand>
 
+                        <Navbar.Brand as={Link} to="inquiry">Product Inquiry</Navbar.Brand>
+
                         <Nav className="me-auto">
                             <NavDropdown title="Categories" id="basic-nav-dropdown" style={{ fontSize: '20px' }}>
                             
