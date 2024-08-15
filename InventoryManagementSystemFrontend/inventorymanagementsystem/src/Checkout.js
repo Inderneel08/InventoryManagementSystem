@@ -30,6 +30,7 @@ function Checkout()
     const [token,setToken]  = useState('');
     const [emailrecieved,setEmailRecieved] = useState('');
     const [role,setRole] = useState('');
+    const [paymentMethod,setPaymentMethod] = useState('');
 
     useEffect(() => {
         fetchStateLists();
@@ -47,6 +48,9 @@ function Checkout()
         setRole(sessionStorage.getItem('role'));
     },[]);
 
+    const setPaymentType = (e) => {
+        setPaymentMethod(e.target.value);
+    };
 
     function clearTransactionRelatedDetails(success)
     {
@@ -126,6 +130,14 @@ function Checkout()
 
     const validatePincode = (pincode) => {
         if(pincode===null || pincode===''){
+            return(false);
+        }
+
+        return(true);
+    }
+
+    const validatePaymentMethod = (paymentMethod) => {
+        if((paymentMethod===null || (paymentMethod===''))){
             return(false);
         }
 
@@ -232,41 +244,68 @@ function Checkout()
 
         if(!validatePincode(pincode)){
             Swal.fire({
-                error:'error',
+                icon:'error',
                 text:'Incorrect pincode',
             });
 
             return ;
         }
 
-        try {
-            const response = await fetch("http://localhost:8080/checkout",{
-                method:'POST',
-                headers:{
-                    'Content-Type': 'application/json',
-                },
-
-                body: JSON.stringify({email}),
+        if(!validatePaymentMethod(paymentMethod)){
+            Swal.fire({
+                icon:'error',
+                text:'Payment Method must be specified',
             });
 
-            const data = await response.json();
+            return ;
+        }
 
-            console.log(data);
+        if(paymentMethod==0){
+            try {
+                const response = await fetch("http://localhost:8080/checkout",{
+                    method:'POST',
+                    headers:{
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+                        Role:sessionStorage.getItem('role'),
+                    },
 
-            if(response.ok){
-                Swal.fire({
-                    icon:'info',
-                    text:data.responseOtp.message,
-                    didClose:()=>{
-                        setShowModal(true);
-                        setOperationId(data.responseOtp.operationId);
-                        setOperation(data.responseOtp.operation);
-                    }
+                    body: JSON.stringify({email}),
                 });
-            }
 
-        } catch (error) {
-            console.error('Otp confirmation error:', error);
+                const data = await response.json();
+
+                console.log(data);
+
+                if(response.ok){
+                    Swal.fire({
+                        icon:'info',
+                        text:data.responseOtp.message,
+                        didClose:()=>{
+                            setShowModal(true);
+                            setOperationId(data.responseOtp.operationId);
+                            setOperation(data.responseOtp.operation);
+                        }
+                    });
+                }
+
+            } catch (error) {
+                console.error('Otp confirmation error:', error);
+            }
+        }
+        else{
+            try {
+                const response = await fetch("http://localhost:8080/onlinePayment",{
+                    method:'POST',
+                    headers:{
+                        'Content-Type': 'application/json',
+                    },
+
+                    body: JSON.stringify({email,netAmount,totalAmount}),
+                });
+            } catch (error) {
+                console.error('Request failed...',error);
+            }
         }
     }
 
@@ -407,6 +446,18 @@ function Checkout()
                     </Modal.Footer>
 
                 </Modal>
+
+                <b>Select Payment Delivery Method:</b>
+                <br />
+                <br />
+
+                <input type="radio" id="cash_dilvery" name="age" value="0" onClick={setPaymentType} />
+                <label for="cash_dilvery" style={{ padding:'1%' }}>Cash on Delivery</label>
+                <input type="radio" id="online" name="age" value="1" onClick={setPaymentType} />
+                <label for="online" style={{ padding:'1%' }}>Pay Online</label>
+                <br />
+                <br />
+                <br />
 
                 <Button variant="dark" className='submit' onClick={checkout}>Place Order</Button>
             </MDBContainer>

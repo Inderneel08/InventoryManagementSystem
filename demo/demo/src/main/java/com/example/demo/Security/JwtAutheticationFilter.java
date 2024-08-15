@@ -52,7 +52,15 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                             filterChain.doFilter(request, response);
                         }
                     } else {
-                        filterChain.doFilter(request, response);
+                        if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))) {
+                            if (role.equals("USER")) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            }
+                        } else {
+                            filterChain.doFilter(request, response);
+                        }
                     }
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -70,7 +78,8 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     || (servletPath.equals("/previous")) || (servletPath.equals("/getAllStates"))
                     || (servletPath.equals("/checkout"))
                     || (servletPath.equals("/confirmOtp")) || (servletPath.equals("/confirmOrder"))
-                    || (servletPath.equals("/getOrderInfo"))) {
+                    || (servletPath.equals("/getOrderInfo")) || (servletPath.equals("/onlinePayment"))) {
+
                 filterChain.doFilter(request, response);
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -122,7 +122,8 @@ public class CheckoutController {
             }
         }
 
-        return (ResponseEntity.ok().body(createResponse("Transaction successful."+"Please note the order id of your transaction "+orderId+".")));
+        return (ResponseEntity.ok().body(createResponse(
+                "Transaction successful." + "Please note the order id of your transaction " + orderId + ".")));
     }
 
     @PostMapping("/checkout")
@@ -137,6 +138,11 @@ public class CheckoutController {
         return (ResponseEntity.ok().body(createOtpResponse(
                 "Please confirm the OTP send on your mail to proceed with the transaction.", getOTP.getOperationId(),
                 1)));
+    }
+
+    @PostMapping("/onlinePayment")
+    public ResponseEntity<?> onlinePayment(@RequestBody Map<String, Object> request) {
+        return null;
     }
 
     private Map<String, String> createResponse(String message) {

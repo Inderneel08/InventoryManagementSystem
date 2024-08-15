@@ -126,6 +126,8 @@ function ShowProducts()
                 method:'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+                    Role:sessionStorage.getItem('role'),
                 },
             });
 
@@ -161,6 +163,8 @@ function ShowProducts()
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+                    Role:sessionStorage.getItem('role'),
                 },
                 body: JSON.stringify({
                     id:id,
@@ -199,6 +203,8 @@ function ShowProducts()
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+                    Role:sessionStorage.getItem('role'),
                 },
                 body: JSON.stringify({
                     id:id,
