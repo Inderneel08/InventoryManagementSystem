@@ -45,4 +45,10 @@ public class FinalOrder {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "paid")
+    private int paid;
+
+    @Column(name = "method")
+    private int method;
 }

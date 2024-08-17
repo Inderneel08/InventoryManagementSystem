@@ -1,0 +1,21 @@
+.transparent-modal .modal-content {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.transparent-modal .modal-dialog {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.transparent-modal .modal-header,.transparent-modal .modal-footer {
+    display: none;
+}
+
+.juNRvt > svg > g > g > circle{
+    stroke: white;
+}

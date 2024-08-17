@@ -1,30 +1,33 @@
 package com.example.demo.Controllers;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.DAO.CartItem;
 import com.example.demo.DAO.OperationIdOTP;
 import com.example.demo.DAO.Orders;
 import com.example.demo.DAO.ResponseOtp;
+import com.example.demo.DAO.User;
 import com.example.demo.ServiceLayer.CheckoutServiceLayer;
 import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 import com.example.demo.ServiceLayer.FinalOrderServiceLayer;
 import com.example.demo.ServiceLayer.OrderServiceLayer;
 import com.example.demo.ServiceLayer.OtpServiceLayer;
 import com.example.demo.ServiceLayer.ProductServiceLayer;
+import com.cashfree.*;
+import com.cashfree.model.CreateOrderRequest;
+import com.cashfree.model.CustomerDetails;
+import com.cashfree.model.OrderEntity;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
@@ -49,7 +52,8 @@ public class CheckoutController {
     private ProductServiceLayer productServiceLayer;
 
     @PostMapping("/confirmOrder")
-    public ResponseEntity<?> reviewOtpForOrdering(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> reviewOtpForOrdering(
+            @RequestBody Map<String, Object> request) {
         String email = (String) request.get("email");
 
         String state = (String) request.get("state");
@@ -126,6 +130,64 @@ public class CheckoutController {
                 "Transaction successful." + "Please note the order id of your transaction " + orderId + ".")));
     }
 
+    @PostMapping("/onlinePayment")
+    public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> paymentRequest) {
+
+        System.out.println(paymentRequest);
+
+        /* Payment Login */
+
+        Cashfree.XClientId = "TEST10284318f45007527c473d39477181348201";
+
+        Cashfree.XClientSecret = "cfsk_ma_test_af8194c3fef48c5b4a3c6c6599e7a82a_5b56e26f";
+
+        Cashfree.XEnvironment = Cashfree.SANDBOX;
+
+        String email = (String) paymentRequest.get("email");
+
+        Double netAmount = (Double) paymentRequest.get("netAmount");
+
+        Double totalAmount = (Double) paymentRequest.get("totalAmount");
+
+        UserDetails userDetails = customUserDetailsServices.loadUserByUsername(email);
+
+        User user = null;
+
+        if (userDetails != null) {
+            user = (User) userDetails;
+        }
+
+        CustomerDetails customerDetails = new CustomerDetails();
+
+        customerDetails.setCustomerId("0");
+
+        if (user != null) {
+            customerDetails.setCustomerId(user.getId().toString());
+        }
+
+        customerDetails.setCustomerEmail(email);
+
+        CreateOrderRequest request = new CreateOrderRequest();
+
+        request.setOrderAmount(netAmount);
+
+        request.setOrderCurrency("INR");
+
+        request.setCustomerDetails(customerDetails);
+
+        // try {
+        // Cashfree cashfree = new Cashfree();
+
+        // ApiResponse<OrderEntity> response = cashfree.PGCreateOrder("2023-08-01",
+        // request, null, null, null);
+
+        // } catch (Exception e) {
+        // throw new RuntimeException(e);
+        // }
+
+        return null;
+    }
+
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody Map<String, String> request) {
 
@@ -138,11 +200,6 @@ public class CheckoutController {
         return (ResponseEntity.ok().body(createOtpResponse(
                 "Please confirm the OTP send on your mail to proceed with the transaction.", getOTP.getOperationId(),
                 1)));
-    }
-
-    @PostMapping("/onlinePayment")
-    public ResponseEntity<?> onlinePayment(@RequestBody Map<String, Object> request) {
-        return null;
     }
 
     private Map<String, String> createResponse(String message) {

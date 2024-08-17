@@ -11,7 +11,8 @@ import { Dropdown, DropdownButton } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import OtpInput from 'react-otp-input';
-
+import { Oval } from 'react-loader-spinner';
+import './loader.css';
 
 function Checkout()
 {
@@ -31,6 +32,7 @@ function Checkout()
     const [emailrecieved,setEmailRecieved] = useState('');
     const [role,setRole] = useState('');
     const [paymentMethod,setPaymentMethod] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchStateLists();
@@ -46,14 +48,14 @@ function Checkout()
         setEmailRecieved(sessionStorage.getItem('emailrecieved'));
 
         setRole(sessionStorage.getItem('role'));
+
     },[]);
 
     const setPaymentType = (e) => {
         setPaymentMethod(e.target.value);
     };
 
-    function clearTransactionRelatedDetails(success)
-    {
+    const clearTransactionRelatedDetails = (success) => {
         setShowModal(false);
         setOtp('');
         setOperation('');
@@ -260,7 +262,7 @@ function Checkout()
             return ;
         }
 
-        if(paymentMethod==0){
+        if(paymentMethod===0){
             try {
                 const response = await fetch("http://localhost:8080/checkout",{
                     method:'POST',
@@ -294,15 +296,32 @@ function Checkout()
             }
         }
         else{
+            setLoading(true);
+
             try {
                 const response = await fetch("http://localhost:8080/onlinePayment",{
                     method:'POST',
                     headers:{
                         'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+                        Role:sessionStorage.getItem('role'),
                     },
 
                     body: JSON.stringify({email,netAmount,totalAmount}),
                 });
+
+                const data = await response.json();
+
+                if(response.ok){
+                    
+                }
+                else{
+                    Swal.fire({
+                        icon:'error',
+                        text:data.message,
+                    });
+                }
+
             } catch (error) {
                 console.error('Request failed...',error);
             }
@@ -310,12 +329,15 @@ function Checkout()
     }
 
     const confirmOrder = async() =>{
+        setLoading(true);
 
         try {
             const response = await fetch("http://localhost:8080/confirmOrder",{
                 method:'POST',
                 headers:{
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+                    Role:sessionStorage.getItem('role'),
                 },
 
                 body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation:operation.toString(),operationId:operationId.toString(),otp}),
@@ -328,10 +350,13 @@ function Checkout()
                     icon:'success',
                     text:data.message,
 
-                    didClose : () => {
-                        clearTransactionRelatedDetails(true);
+                    didClose : async () => {
+                        await clearTransactionRelatedDetails(true);
 
-                        navigate('/');
+                        setTimeout(() => {
+                            setLoading(false);
+                            navigate('/');
+                        }, 2000);
                     }
                 });
 
@@ -342,10 +367,13 @@ function Checkout()
                     icon:'error',
                     text:data.message,
 
-                    didClose : ()=>{
-                        clearTransactionRelatedDetails(false);
+                    didClose : async ()=>{
+                        await clearTransactionRelatedDetails(false);
 
-                        navigate('/');
+                        setTimeout(() => {
+                            setLoading(false);
+                            navigate('/');
+                        }, 2000);
                     }
                 });
 
@@ -354,6 +382,12 @@ function Checkout()
 
         } catch (error) {
             console.error('Payment Error:', error);
+        }
+        finally{
+            setTimeout(() => {
+                setLoading(false);
+                navigate('/');
+            }, 2000);
         }
     }
 
@@ -461,6 +495,16 @@ function Checkout()
 
                 <Button variant="dark" className='submit' onClick={checkout}>Place Order</Button>
             </MDBContainer>
+
+            {loading && (
+                <Modal show={true} centered style={{backgroundColor: 'rgba(0, 0, 0, 0.5)',border: 'none',boxShadow: 'none',}} dialogClassName="transparent-modal">
+                    <Modal.Body style={{display: 'flex', justifyContent: 'center',alignItems: 'center',backgroundColor: 'transparent',padding: 0,}}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                            <Oval color="black" height={80} width={80}/>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+            )}
         </>
     );
 }

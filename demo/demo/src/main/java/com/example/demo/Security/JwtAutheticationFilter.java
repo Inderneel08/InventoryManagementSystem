@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.demo.Jwt.JwtTokenProvider;
 
+import lombok.val;
+
 @Component
 public class JwtAutheticationFilter extends OncePerRequestFilter {
 
@@ -36,9 +38,17 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
 
         System.out.println(role);
 
-        // || (servletPath.equals("/createProduct"))
+        // boolean value = requestTokenHeader != null &&
+        // requestTokenHeader.startsWith("Bearer ")
+        // && !requestTokenHeader.substring(7).equals("null");
 
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+        // System.out.println(value);
+
+        // System.out.println(requestTokenHeader.substring(7).getClass());
+
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")
+                && !requestTokenHeader.substring(7).equals("null")) {
+
             jwtToken = requestTokenHeader.substring(7);
 
             if (!jwtTokenProvider.isTokenExpired(jwtToken)) {
@@ -52,7 +62,8 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                             filterChain.doFilter(request, response);
                         }
                     } else {
-                        if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))) {
+                        if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))
+                                || (servletPath.equals("/confirmOrder"))) {
                             if (role.equals("USER")) {
                                 filterChain.doFilter(request, response);
                             } else {
@@ -70,6 +81,8 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
             }
 
         } else {
+            // System.out.println("Here.....");
+
             String servletPath = request.getServletPath();
 
             if ((servletPath.equals("/login")) || (servletPath.equals("/register"))
