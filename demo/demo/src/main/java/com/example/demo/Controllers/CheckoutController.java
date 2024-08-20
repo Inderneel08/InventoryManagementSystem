@@ -152,6 +152,8 @@ public class CheckoutController {
 
         String email = (String) paymentRequest.get("email");
 
+        String phoneNumber = (String) paymentRequest.get("phoneNumber");
+
         Double netAmount = (Double) paymentRequest.get("netAmount");
 
         Double roundedAmount = Math.round(netAmount * 100.0) / 100.0;
@@ -175,6 +177,8 @@ public class CheckoutController {
         }
 
         customerDetails.setCustomerEmail(email);
+
+        customerDetails.setCustomerPhone(phoneNumber);
 
         CreateOrderRequest request = new CreateOrderRequest();
 

@@ -33,7 +33,7 @@ function Checkout()
     const [role,setRole] = useState('');
     const [paymentMethod,setPaymentMethod] = useState('');
     const [loading, setLoading] = useState(false);
-    const [phoneNumber,setPhoneNumber] = useState(0);
+    const [phoneNumber,setPhoneNumber] = useState('');
 
     useEffect(() => {
         fetchStateLists();
@@ -267,6 +267,24 @@ function Checkout()
             return ;
         }
 
+        if(phoneNumber===null || phoneNumber===''){
+            Swal.fire({
+                icon:'error',
+                text:'Phone Number cannot be empty',
+            });
+
+            return ;
+        }
+
+        if(phoneNumber.length!==10){
+            Swal.fire({
+                icon:'error',
+                text:'Phone Number should be 10 digits long',
+            });
+
+            return ;
+        }
+
         if(paymentMethod===0){
             try {
                 const response = await fetch("http://localhost:8080/checkout",{
@@ -312,7 +330,7 @@ function Checkout()
                         Role:sessionStorage.getItem('role'),
                     },
 
-                    body: JSON.stringify({email,netAmount,totalAmount}),
+                    body: JSON.stringify({email,netAmount,totalAmount,phoneNumber}),
                 });
 
                 const data = await response.json();
