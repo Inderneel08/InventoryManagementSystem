@@ -33,6 +33,7 @@ function Checkout()
     const [role,setRole] = useState('');
     const [paymentMethod,setPaymentMethod] = useState('');
     const [loading, setLoading] = useState(false);
+    const [phoneNumber,setPhoneNumber] = useState(0);
 
     useEffect(() => {
         fetchStateLists();
@@ -54,6 +55,10 @@ function Checkout()
     const setPaymentType = (e) => {
         setPaymentMethod(e.target.value);
     };
+
+    // const cashfree = Cashfree({
+    //     mode: "sandbox"
+    // });
 
     const clearTransactionRelatedDetails = (success) => {
         setShowModal(false);
@@ -313,12 +318,24 @@ function Checkout()
                 const data = await response.json();
 
                 if(response.ok){
-                    
+                    console.log(data);
+                    // let checkoutOptions = {
+                    //     paymentSessionId: "session_ZyKOmawRM2zuJ_Sepp6Kf74JHTC90VGF-G6zGoW1QT2xp-mecY-uamhTgJd-NdNmOPFVIQhYyOnYkxjB1T0E5kACc4NPD_hczx_0JLlsWJDz",
+                    //     redirectTarget: "_modal"
+                    // }
+
+                    // cashfree.checkout(checkoutOptions).then((result) =>{
+                    // });
                 }
                 else{
                     Swal.fire({
                         icon:'error',
                         text:data.message,
+                        didClose : () => {
+                            setTimeout(() => {
+                                setLoading(false);
+                            }, 2000);
+                        }
                     });
                 }
 
@@ -423,6 +440,9 @@ function Checkout()
                         <MDBInput wrapperClass='mb-4' label='Shipping Address' id='shipping_address' type='text' size="lg" onChange={(e) => setShippingAddress(e.target.value)} value={shippingAddress} required />
 
                         <MDBInput wrapperClass='mb-4' label='Pincode' id='pincode' type='text' size="lg" onChange={(e) => setPincode(e.target.value)} value={pincode} required />
+
+                        <MDBInput wrapperClass='mb-4' label='Phone Number' id='phone_number' type='number' size="lg" onChange={(e) => setPhoneNumber(e.target.value)} value={phoneNumber} maxLength={10} required />
+
                     </MDBCol>
 
                     <MDBCol col='4' md='6'>
@@ -486,9 +506,9 @@ function Checkout()
                 <br />
 
                 <input type="radio" id="cash_dilvery" name="age" value="0" onClick={setPaymentType} />
-                <label for="cash_dilvery" style={{ padding:'1%' }}>Cash on Delivery</label>
+                <label htmlFor="cash_dilvery" style={{ padding:'1%' }}>Cash on Delivery</label>
                 <input type="radio" id="online" name="age" value="1" onClick={setPaymentType} />
-                <label for="online" style={{ padding:'1%' }}>Pay Online</label>
+                <label htmlFor="online" style={{ padding:'1%' }}>Pay Online</label>
                 <br />
                 <br />
                 <br />

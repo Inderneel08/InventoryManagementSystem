@@ -5,16 +5,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
 import com.example.demo.Jwt.JwtTokenProvider;
 import com.example.demo.ServiceLayer.CustomUserDetailsServices;
 
 @Configuration
 @EnableWebSecurity
-public class Security extends WebSecurityConfigurerAdapter {
+public class Security {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -25,8 +26,19 @@ public class Security extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsServices customUserDetailsServices;
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    // @Override
+    // protected void configure(HttpSecurity httpSecurity) throws Exception {
+    // httpSecurity.csrf().disable().cors().and().authorizeRequests()
+    // .anyRequest().permitAll()
+    // .and()
+    // .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    // .and()
+    // .formLogin().disable()
+    // .logout().permitAll();
+    // }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable().cors().and().authorizeRequests()
                 .anyRequest().permitAll()
                 .and()
@@ -34,6 +46,8 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().disable()
                 .logout().permitAll();
+
+        return (httpSecurity.build());
     }
 
     @Bean

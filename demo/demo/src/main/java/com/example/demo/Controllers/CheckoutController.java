@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -50,6 +51,12 @@ public class CheckoutController {
 
     @Autowired
     private ProductServiceLayer productServiceLayer;
+
+    // @Value("${cashfree.clientId}")
+    // private String clientId;
+
+    // @Value("${cashfree.clientSecret}")
+    // private String clientSecret;
 
     @PostMapping("/confirmOrder")
     public ResponseEntity<?> reviewOtpForOrdering(
@@ -137,15 +144,17 @@ public class CheckoutController {
 
         /* Payment Login */
 
-        Cashfree.XClientId = "TEST10284318f45007527c473d39477181348201";
+        // Cashfree.XClientId = "";
 
-        Cashfree.XClientSecret = "cfsk_ma_test_af8194c3fef48c5b4a3c6c6599e7a82a_5b56e26f";
+        // Cashfree.XClientSecret = "";
 
-        Cashfree.XEnvironment = Cashfree.SANDBOX;
+        // Cashfree.XEnvironment = Cashfree.SANDBOX;
 
         String email = (String) paymentRequest.get("email");
 
         Double netAmount = (Double) paymentRequest.get("netAmount");
+
+        Double roundedAmount = Math.round(netAmount * 100.0) / 100.0;
 
         Double totalAmount = (Double) paymentRequest.get("totalAmount");
 
@@ -169,23 +178,32 @@ public class CheckoutController {
 
         CreateOrderRequest request = new CreateOrderRequest();
 
-        request.setOrderAmount(netAmount);
+        System.out.println("Rounded Amount : ->" + roundedAmount);
+
+        request.setOrderAmount(roundedAmount);
 
         request.setOrderCurrency("INR");
 
         request.setCustomerDetails(customerDetails);
 
-        // try {
-        // Cashfree cashfree = new Cashfree();
+        try {
+            Cashfree cashfree = new Cashfree();
 
-        // ApiResponse<OrderEntity> response = cashfree.PGCreateOrder("2023-08-01",
-        // request, null, null, null);
+            Cashfree.XClientId = "TEST10284318f45007527c473d39477181348201";
 
-        // } catch (Exception e) {
-        // throw new RuntimeException(e);
-        // }
+            Cashfree.XClientSecret = "cfsk_ma_test_0c6869d946184130107fc0cb23acbabc_4e020c8f";
 
-        return null;
+            Cashfree.XEnvironment = Cashfree.SANDBOX;
+
+            ApiResponse<OrderEntity> response = cashfree.PGCreateOrder("2023-08-01",
+                    request, null, null, null);
+
+            System.out.println(response);
+
+            return (ResponseEntity.ok().body(response.getData()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PostMapping("/checkout")
