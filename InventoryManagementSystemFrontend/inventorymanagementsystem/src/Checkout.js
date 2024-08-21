@@ -337,12 +337,18 @@ function Checkout()
 
                 if(response.ok){
                     console.log(data);
-                    // let checkoutOptions = {
-                    //     paymentSessionId: "session_ZyKOmawRM2zuJ_Sepp6Kf74JHTC90VGF-G6zGoW1QT2xp-mecY-uamhTgJd-NdNmOPFVIQhYyOnYkxjB1T0E5kACc4NPD_hczx_0JLlsWJDz",
-                    //     redirectTarget: "_modal"
-                    // }
+
+                    let checkoutOptions = {
+                        paymentSessionId: data.order_meta.return_url,
+                        redirectTarget: "_modal"
+                    }
+
+                    // const cashfree = Cashfree({
+                    //     mode:"sandbox"
+                    // });
 
                     // cashfree.checkout(checkoutOptions).then((result) =>{
+
                     // });
                 }
                 else{

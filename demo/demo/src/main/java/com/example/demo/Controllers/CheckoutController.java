@@ -29,6 +29,7 @@ import com.cashfree.*;
 import com.cashfree.model.CreateOrderRequest;
 import com.cashfree.model.CustomerDetails;
 import com.cashfree.model.OrderEntity;
+import com.cashfree.model.OrderMeta;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
@@ -189,6 +190,14 @@ public class CheckoutController {
         request.setOrderCurrency("INR");
 
         request.setCustomerDetails(customerDetails);
+
+        // Setting return url.
+
+        OrderMeta orderMeta = new OrderMeta();
+
+        orderMeta.setReturnUrl("http://localhost:3000/");
+
+        request.setOrderMeta(orderMeta);
 
         try {
             Cashfree cashfree = new Cashfree();
