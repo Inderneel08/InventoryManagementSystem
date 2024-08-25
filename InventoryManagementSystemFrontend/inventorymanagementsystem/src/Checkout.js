@@ -13,6 +13,8 @@ import Button from 'react-bootstrap/Button';
 import OtpInput from 'react-otp-input';
 import { Oval } from 'react-loader-spinner';
 import './loader.css';
+import {load} from '@cashfreepayments/cashfree-js';
+
 
 function Checkout()
 {
@@ -82,6 +84,8 @@ function Checkout()
             setPincode('');
 
             setCartItems([]);
+
+            setPhoneNumber('');
 
             sessionStorage.clear();
 
@@ -339,16 +343,66 @@ function Checkout()
                     console.log(data);
 
                     let checkoutOptions = {
-                        paymentSessionId: data.order_meta.return_url,
-                        redirectTarget: "_modal"
+                        paymentSessionId: data.paymentSessionId,
+                        redirectTarget: "_modal",
                     }
 
-                    // const cashfree = Cashfree({
-                    //     mode:"sandbox"
-                    // });
+                    const cashfree = await load({
+                        mode:"sandbox"
+                    });
+
+
+                    try {
+                        const result = await cashfree.checkout(checkoutOptions);
+
+                        if (result.error) {
+                            console.log("User has closed the popup or there is some payment error, Check for Payment Status");
+                            console.log(result.error);
+                        } else if (result.redirect) {
+                            console.log("Payment will be redirected");
+                        } else if (result.paymentDetails) {
+                            console.log("Payment has been completed, Check for Payment Status");
+                            console.log(result.paymentDetails.paymentMessage);
+
+                            await clearTransactionRelatedDetails(true);
+                            console.log("Transaction details cleared.");
+
+                            setTimeout(() => {
+                                console.log("Redirecting to /");
+                                setLoading(false);
+                                navigate('/');
+                            }, 2000);
+                        }
+
+                    } catch (checkoutError) {
+                        console.error("Checkout process failed: ", checkoutError);
+                    }
 
                     // cashfree.checkout(checkoutOptions).then((result) =>{
+                    //     console.log("Result : -> " + result);
+                    //     if(result.error){
+                    //         console.log("User has closed the popup or there is some payment error, Check for Payment Status");
+                    //         console.log(result.error);
+                    //     }
 
+                    //     if(result.redirect){
+                    //         console.log("Payment will be redirected");
+                    //     }
+
+                    //     if(result.paymentDetails){
+                    //         console.log("Payment has been completed, Check for Payment Status");
+                    //         console.log(result.paymentDetails.paymentMessage);
+
+                    //         clearTransactionRelatedDetails(true).then(() => {
+                    //             setTimeout(() => {
+                    //                 setLoading(false);
+                    //                 navigate('/');
+                    //             }, 2000);
+                    //         });
+                    //     }
+
+                    // }).catch((checkoutError) =>{
+                    //     console.error("Checkout process failed: ", checkoutError);
                     // });
                 }
                 else{
@@ -362,7 +416,6 @@ function Checkout()
                         }
                     });
                 }
-
             } catch (error) {
                 console.error('Request failed...',error);
             }
