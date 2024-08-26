@@ -30,7 +30,7 @@ function Checkout()
     const [otp,setOtp] = useState('');
     const [operationId,setOperationId] = useState(0);
     const [operation,setOperation] = useState(0);
-    const [token,setToken]  = useState('');
+    const [token,setToken]  = useState(null);
     const [emailrecieved,setEmailRecieved] = useState('');
     const [role,setRole] = useState('');
     const [paymentMethod,setPaymentMethod] = useState('');
