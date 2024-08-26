@@ -334,7 +334,7 @@ function Checkout()
                         Role:sessionStorage.getItem('role'),
                     },
 
-                    body: JSON.stringify({email,netAmount,totalAmount,phoneNumber}),
+                    body: JSON.stringify({email,netAmount,totalAmount,phoneNumber,cartItems,operationId:operationId.toString(),state,billingAddress,shippingAddress,pincode}),
                 });
 
                 const data = await response.json();

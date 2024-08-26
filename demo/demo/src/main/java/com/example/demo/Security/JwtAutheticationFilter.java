@@ -49,7 +49,7 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                         }
                     } else {
                         if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))
-                                || (servletPath.equals("/confirmOrder"))) {
+                                || (servletPath.equals("/confirmOrder")) || (servletPath.equals("/confirmation"))) {
                             if (role.equals("USER")) {
                                 filterChain.doFilter(request, response);
                             } else {
@@ -79,7 +79,7 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     || (servletPath.equals("/confirmOtp")) ||
                     (servletPath.equals("/confirmOrder"))
                     || (servletPath.equals("/getOrderInfo")) ||
-                    (servletPath.equals("/onlinePayment"))) {
+                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation"))) {
 
                 filterChain.doFilter(request, response);
             } else {

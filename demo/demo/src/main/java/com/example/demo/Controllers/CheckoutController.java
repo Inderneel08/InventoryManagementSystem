@@ -8,9 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,11 +81,15 @@ public class CheckoutController {
 
         String pincode = (String) request.get("pincode");
 
+        String phoneNumber = (String) request.get("phoneNumber");
+
         Integer otp = (Integer.parseInt((String) request.get("otp")));
 
         BigInteger operationId = new BigInteger((String) request.get("operationId"));
 
         Integer operation = (Integer.parseInt((String) request.get("operation")));
+
+        Integer method = 0;
 
         // Incorrect OTP.
         if (!otpServiceLayer.validateOtpForCheckout(operation, otp, operationId)) {
@@ -94,7 +100,7 @@ public class CheckoutController {
 
         finalOrderServiceLayer.createOrder(orderId, totalAmount, netAmount, pincode,
                 operationId, email, state,
-                billingAddress, shippingAddress);
+                billingAddress, shippingAddress, phoneNumber, method);
 
         for (int i = 0; i < cartItems.size(); i++) {
             LinkedHashMap<String, Object> item = cartItems.get(i);
@@ -143,14 +149,6 @@ public class CheckoutController {
 
         System.out.println(paymentRequest);
 
-        /* Payment Login */
-
-        // Cashfree.XClientId = "";
-
-        // Cashfree.XClientSecret = "";
-
-        // Cashfree.XEnvironment = Cashfree.SANDBOX;
-
         String email = (String) paymentRequest.get("email");
 
         String phoneNumber = (String) paymentRequest.get("phoneNumber");
@@ -160,6 +158,13 @@ public class CheckoutController {
         Double roundedAmount = Math.round(netAmount * 100.0) / 100.0;
 
         Double totalAmount = (Double) paymentRequest.get("totalAmount");
+
+        Integer method = 1;
+
+        BigInteger operationId = new BigInteger((String) paymentRequest.get("operationId"));
+
+        ArrayList<LinkedHashMap<String, Object>> cartItems = (ArrayList<LinkedHashMap<String, Object>>) paymentRequest
+                .get("cartItems");
 
         UserDetails userDetails = customUserDetailsServices.loadUserByUsername(email);
 
@@ -211,12 +216,75 @@ public class CheckoutController {
             ApiResponse<OrderEntity> response = cashfree.PGCreateOrder("2023-08-01",
                     request, null, null, null);
 
+            String orderId = response.getData().getOrderId();
+
+            String state = (String) paymentRequest.get("state");
+
+            String billingAddress = (String) paymentRequest.get("billingAddress");
+
+            String shippingAddress = (String) paymentRequest.get("shippingAddress");
+
+            String pincode = (String) paymentRequest.get("pincode");
+
+            finalOrderServiceLayer.createOrder(orderId, totalAmount,
+                    roundedAmount, pincode,
+                    operationId, email, state,
+                    billingAddress, shippingAddress, phoneNumber, method);
+
+            for (int i = 0; i < cartItems.size(); i++) {
+                LinkedHashMap<String, Object> item = cartItems.get(i);
+
+                CartItem cartItem = new CartItem();
+
+                cartItem.setCount((Integer) item.get("count"));
+
+                cartItem.setPath((String) item.get("path"));
+
+                if (item.get("pricePerItem") instanceof Double) {
+                    cartItem.setPricePerItem((Double) item.get("pricePerItem"));
+                } else if (item.get("pricePerItem") instanceof Integer) {
+                    cartItem.setPricePerItem(((Integer) item.get("pricePerItem")).doubleValue());
+                }
+
+                cartItem.setProductName((String) item.get("productName"));
+
+                cartItem.setProductId(
+                        productServiceLayer.productId(BigInteger.valueOf((Integer) item.get("productId"))));
+
+                Orders orders = new Orders();
+
+                orders.setOrderId(orderId);
+
+                orders.setProductId(cartItem.getProductId());
+
+                orders.setCountProducts(cartItem.getCount());
+
+                orders.setDate(LocalDateTime.now());
+
+                try {
+                    orderServiceLayer.createOrders(orders);
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                    return (ResponseEntity.badRequest().body(createResponse("Transaction failed.")));
+                }
+            }
+
             System.out.println(response);
 
             return (ResponseEntity.ok().body(response.getData()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PostMapping("/confirmation")
+    public ResponseEntity<?> getConfirmationWebHook(@RequestBody(required = false) Map<String, Object> request) {
+        System.out.println("Hook called");
+
+        System.out.println(request);
+
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/checkout")

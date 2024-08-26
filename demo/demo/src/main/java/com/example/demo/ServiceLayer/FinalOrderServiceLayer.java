@@ -66,7 +66,8 @@ public class FinalOrderServiceLayer {
     }
 
     public void createOrder(String orderId, Double totalAmount, Double netAmount, String pincode,
-            BigInteger operationId, String email, String state, String billingAddress, String shippingAddress) {
+            BigInteger operationId, String email, String state, String billingAddress, String shippingAddress,
+            String phoneNumber, int method) {
         FinalOrder finalOrder = new FinalOrder();
 
         finalOrder.setOrderId(orderId);
@@ -88,6 +89,10 @@ public class FinalOrderServiceLayer {
         finalOrder.setNetAmount(netAmount);
 
         finalOrder.setEmail(email);
+
+        finalOrder.setMethod(method);
+
+        finalOrder.setPhoneNumber(phoneNumber);
 
         finalOrderRepository.save(finalOrder);
     }

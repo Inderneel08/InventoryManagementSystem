@@ -52,4 +52,7 @@ public class FinalOrder {
 
     @Column(name = "method")
     private int method;
+
+    @Column(name = "phoneNumber")
+    private String phoneNumber;
 }
