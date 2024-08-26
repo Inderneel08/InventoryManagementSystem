@@ -97,6 +97,12 @@ public class FinalOrderServiceLayer {
         finalOrderRepository.save(finalOrder);
     }
 
-    // public
+    public void changeOrderStatus(String payment_status, String orderId) {
+        if (payment_status.equals("SUCCESS")) {
+            finalOrderRepository.setStatusOfPaymentSuccess(orderId);
+        } else {
+            finalOrderRepository.setStatusOfPaymentFailed(orderId);
+        }
+    }
 
 }

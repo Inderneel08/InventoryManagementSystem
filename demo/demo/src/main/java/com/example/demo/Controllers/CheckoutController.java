@@ -7,12 +7,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -283,6 +281,15 @@ public class CheckoutController {
         System.out.println("Hook called");
 
         System.out.println(request);
+
+        Map<String, Object> data = (Map<String, Object>) request.get("data");
+
+        Map<String, Object> order = (Map<String, Object>) data.get("order");
+
+        Map<String, Object> payment = (Map<String, Object>) data.get("payment");
+
+        finalOrderServiceLayer.changeOrderStatus((String) payment.get("payment_status"),
+                (String) order.get("order_id"));
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
