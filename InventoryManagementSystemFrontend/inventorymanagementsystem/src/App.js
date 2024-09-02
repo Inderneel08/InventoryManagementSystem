@@ -17,6 +17,7 @@ import ShowProducts from './ShowProducts';
 import Checkout from './Checkout';
 import OtpModal from './OtpModal';
 import TransactionDetails from './TransactionDetails';
+import History from './History';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
               <Route path="signIn"      element={<SignIn />}></Route>
               <Route path="register"    element={<Register />}></Route>
               <Route path="contact"     element={<Contact />}></Route>
+              <Route path="history"     element={<History />}></Route>
               <Route path="adminLogin"  element={<AdminLogin />}></Route>
               <Route path="logout"      element={<Logout />} ></Route>
               <Route path="shoppingCart" element={<ShoppingCart />}></Route>

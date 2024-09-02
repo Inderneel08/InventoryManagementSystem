@@ -289,7 +289,9 @@ function Checkout()
             return ;
         }
 
-        if(paymentMethod===0){
+        if(paymentMethod==="0"){
+            setLoading(true);
+
             try {
                 const response = await fetch("http://localhost:8080/checkout",{
                     method:'POST',
@@ -314,6 +316,7 @@ function Checkout()
                             setShowModal(true);
                             setOperationId(data.responseOtp.operationId);
                             setOperation(data.responseOtp.operation);
+                            setLoading(false);
                         }
                     });
                 }
@@ -423,7 +426,7 @@ function Checkout()
     }
 
     const confirmOrder = async() =>{
-        setLoading(true);
+        setLoading(false);
 
         try {
             const response = await fetch("http://localhost:8080/confirmOrder",{
@@ -434,7 +437,7 @@ function Checkout()
                     Role:sessionStorage.getItem('role'),
                 },
 
-                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation:operation.toString(),operationId:operationId.toString(),otp}),
+                body: JSON.stringify({email,state,billingAddress,shippingAddress,cartItems,totalAmount,netAmount,pincode,operation:operation.toString(),operationId:operationId.toString(),otp,phoneNumber}),
             });
 
             const data = await response.json();
@@ -445,12 +448,14 @@ function Checkout()
                     text:data.message,
 
                     didClose : async () => {
+                        setLoading(true);
+
                         await clearTransactionRelatedDetails(true);
 
                         setTimeout(() => {
                             setLoading(false);
                             navigate('/');
-                        }, 2000);
+                        }, 4000);
                     }
                 });
 
@@ -462,12 +467,14 @@ function Checkout()
                     text:data.message,
 
                     didClose : async ()=>{
+                        setLoading(true);
+
                         await clearTransactionRelatedDetails(false);
 
                         setTimeout(() => {
                             setLoading(false);
                             navigate('/');
-                        }, 2000);
+                        }, 4000);
                     }
                 });
 
@@ -481,7 +488,7 @@ function Checkout()
             setTimeout(() => {
                 setLoading(false);
                 navigate('/');
-            }, 2000);
+            }, 4000);
         }
     }
 
