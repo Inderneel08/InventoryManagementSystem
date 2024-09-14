@@ -1,11 +1,13 @@
 package com.example.demo.Controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +20,9 @@ public class OrderController {
 
     @Autowired
     private FinalOrderServiceLayer finalOrderServiceLayer;
+
+    @Autowired
+    private OrderServiceLayer orderServiceLayer;
 
     @PostMapping("/getOrderInfo")
     public ResponseEntity<?> fetchOrderInfo(@RequestBody Map<String, Object> request) {
@@ -46,6 +51,15 @@ public class OrderController {
         }
 
         return (ResponseEntity.ok().body("Succesful"));
+    }
+
+    @PostMapping("/fetchOrders")
+    public ResponseEntity<?> fetchOrdersViaOrderId(@RequestBody Map<String, Object> request) {
+        String orderId = (String) request.get("orderId");
+
+        List<?> orders = orderServiceLayer.fetchOrders(orderId);
+
+        return (ResponseEntity.ok().body(orders));
     }
 
 }
