@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-
 import './App.css';
-
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+
 
 function History()
 {
@@ -13,6 +13,8 @@ function History()
     const [hasMore, setHasMore] = useState(true); // To track if there's more data to load
 
     const [page,setPage] = useState(0);
+
+    const [showModal, setShowModal] = useState(false);
 
     const size=10;
 
@@ -98,6 +100,10 @@ function History()
         }
     }
 
+    const closeModal = async() => {
+        setShowModal(false);
+    }
+
     console.log(orderHistory);
 
     useEffect(() => {
@@ -170,6 +176,23 @@ function History()
                 </ul> */}
 
                 {(!hasMore && orderHistory.length===0) && <p>No more records to display</p>}
+
+                <Modal show={showModal} onHide={closeModal} backdrop="static">
+                    <Modal.Header closeButton>
+                        <Modal.Title>List Of Purchased Items</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <table>
+                            <thead>
+                                <th></th>
+                            </thead>
+                        </table>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant='danger'>Cancel Order</Button>
+                    </Modal.Footer>
+                </Modal>
 
             </div>
         </>
