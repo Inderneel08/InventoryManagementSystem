@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function History()
 {
@@ -15,6 +15,8 @@ function History()
     const [page,setPage] = useState(0);
 
     const [showModal, setShowModal] = useState(false);
+
+    const [orders,setOrders] = useState([]);
 
     const size=10;
 
@@ -42,9 +44,9 @@ function History()
                 body:JSON.stringify({orderId}),
             });
 
-            const orders = await response.json();
+            const orderList = await response.json();
 
-            console.log(orders);
+            setOrders(orderList);
 
         } catch (error) {
             console.log(error);
@@ -54,6 +56,8 @@ function History()
     function showDetailsViaOrderId(orderId)
     {
         fetchOrderUsingOrderId(orderId);
+
+        setShowModal(true);
     }
 
     async function fetchOrderHistory(page,size)
@@ -119,6 +123,9 @@ function History()
         return () => window.removeEventListener('scroll',handleScroll);
     },[]);
 
+    console.log(orders);
+
+
     return(
         <>
             <br />
@@ -177,15 +184,34 @@ function History()
 
                 {(!hasMore && orderHistory.length===0) && <p>No more records to display</p>}
 
-                <Modal show={showModal} onHide={closeModal} backdrop="static">
+                <Modal show={showModal} onHide={closeModal} size='lg' backdrop="static">
                     <Modal.Header closeButton>
                         <Modal.Title>List Of Purchased Items</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
+                    <Modal.Body style={{ overflow:'auto' }}>
                         <table>
                             <thead>
-                                <th></th>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Count of Products</th>
+                                    <th>Category of Products</th>
+                                    <th>Sub Category of Products</th>
+                                    <th>Delete</th>
+                                    <th>Total Cost</th>
+                                </tr>
                             </thead>
+                            <tbody>
+                                {orders.map((order, index) => (
+                                    <tr key={index}>
+                                        <td>{order[0]}</td>
+                                        <td>{order[6]}</td>
+                                        <td>{order[2]}</td>
+                                        <td>{order[3]}</td>
+                                        <td><i className="fa fa-trash-o" data-close-id={order.id}></i></td>
+                                        <td>{order[1]*order[6]}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
                         </table>
                     </Modal.Body>
 

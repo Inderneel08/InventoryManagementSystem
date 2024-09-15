@@ -11,6 +11,6 @@ import com.example.demo.DAO.Orders;
 @Repository
 public interface OrderRepository extends JpaRepository<Orders, BigInteger> {
 
-    @Query(value = "SELECT * FROM orders where orders.orderId = :orderId", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT products.productName,products.costPerUnit,products.category,products.subcategory,orders.id,orders.orderId,orders.countProducts  from products INNER JOIN orders on products.productId=orders.productId where orders.orderId = :orderId", nativeQuery = true)
     public List<?> fetchOrders(String orderId);
 }
