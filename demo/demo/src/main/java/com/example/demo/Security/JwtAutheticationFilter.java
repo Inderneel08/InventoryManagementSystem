@@ -68,7 +68,6 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
             }
 
         } else {
-
             String servletPath = request.getServletPath();
 
             if ((servletPath.equals("/login")) || (servletPath.equals("/register"))

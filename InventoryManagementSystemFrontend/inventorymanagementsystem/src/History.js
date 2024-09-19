@@ -207,8 +207,8 @@ function History()
                                         <td>{order[6]}</td>
                                         <td>{order[2]}</td>
                                         <td>{order[3]}</td>
-                                        <td><i className="fa fa-trash-o" data-close-id={order.id}></i></td>
-                                        <td>{order[1]*order[6]}</td>
+                                        <td><i className="fa fa-trash-o" data-close-id={order.id} style={{ cursor:'pointer' }}></i></td>
+                                        <td>{(order[1]*order[6]) - (0.1 * (order[1]*order[6]))}</td>
                                     </tr>
                                 ))}
                             </tbody>

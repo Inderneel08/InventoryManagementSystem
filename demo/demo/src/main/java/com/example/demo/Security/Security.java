@@ -45,6 +45,7 @@ public class Security {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
+                .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("http://localhost:3000", true))
                 .logout().permitAll();
 
         return (httpSecurity.build());

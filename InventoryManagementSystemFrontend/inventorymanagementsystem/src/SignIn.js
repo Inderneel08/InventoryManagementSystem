@@ -208,9 +208,10 @@ function SignIn() {
           <div className='text-center text-md-start mt-4 pt-2'>
             <button className="m-3 btn btn-primary" size='xl' onClick={handleLogin}>Login</button>
 
-            <button className="m-3 btn btn-danger" size='xl' style={{ color: 'white'}}>
-            <FontAwesomeIcon icon={faGoogle} /> Login with Google
-            </button>
+            <a href="http://localhost:8080/oauth2/authorization/google" className="m-3 btn btn-danger" size='xl' style={{ color: 'white'}}>
+              <FontAwesomeIcon icon={faGoogle} />
+              <span className='p-2'>Login with Google</span>
+            </a>
 
             <button className="m-3 btn btn-primary" size='xl' style={{ color: 'white'}}>
               <FontAwesomeIcon icon={faFacebook} /> Login with Facebook
