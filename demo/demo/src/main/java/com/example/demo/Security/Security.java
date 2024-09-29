@@ -42,11 +42,18 @@ public class Security {
         httpSecurity.csrf().disable().cors().and().authorizeRequests()
                 .anyRequest().permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .formLogin().disable()
-                .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("http://localhost:3000", true))
-                .logout().permitAll();
+                .oauth2Login(oauth2 -> {
+                    oauth2.defaultSuccessUrl("http://localhost:3000", true);
+                    // oauth2.successHandler();
+                })
+                .logout(
+                        logoutForm -> {
+                            logoutForm.logoutUrl("/do-logout");
+                            logoutForm.logoutSuccessUrl("http://localhost:3000");
+                        });
 
         return (httpSecurity.build());
     }

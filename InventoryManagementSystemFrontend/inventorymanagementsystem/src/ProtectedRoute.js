@@ -24,6 +24,22 @@ const checkAuthentication = async () => {
   }
 };
 
+// const oAuth2LoginGoogleCredentials = async () => {
+//   try {
+//     const response = await fetch("http://localhost:8080/",{
+//       method:'GET',
+//     });
+
+//     const responseData = await response.json();
+
+//     console.log(responseData);
+
+//   } catch (error) {
+//     console.error(error);
+//   }
+
+// }
+
 
 const ProtectedRoute = ({ children }) => {
 
@@ -43,8 +59,11 @@ const ProtectedRoute = ({ children }) => {
   console.log(isAuthenticated);
   console.log(role);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   oAuth2LoginGoogleCredentials();
+  // },[])
 
+  useEffect(() => {
     if (jwtToken != null) {
         checkAuthentication().then((result) => {
         setIsAuthenticated(result);

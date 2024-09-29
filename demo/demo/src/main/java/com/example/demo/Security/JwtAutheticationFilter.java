@@ -21,6 +21,13 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // if (request.getServletPath().equals("login/oauth2/code/google")) {
+        // System.out.println(request.getServletPath());
+        // }
+
+        System.out.println(request);
+
         String requestTokenHeader = request.getHeader("Authorization");
 
         String role = request.getHeader("Role");
@@ -34,6 +41,8 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")
                 && !requestTokenHeader.substring(7).equals("null")) {
 
+            System.out.println("Hello1");
+
             jwtToken = requestTokenHeader.substring(7);
 
             if (!jwtTokenProvider.isTokenExpired(jwtToken)) {
@@ -46,6 +55,9 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                         if (role.equals("ADMIN")) {
                             System.out.println("To filter");
                             filterChain.doFilter(request, response);
+                        } else if (servletPath.equals("/getOauthCredentials")
+                                || servletPath.equals("/login/oauth2/code/google")) {
+                            filterChain.doFilter(request, response);
                         }
                     } else {
                         if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))
@@ -56,6 +68,9 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                             } else {
                                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             }
+                        } else if (servletPath.equals("/getOauthCredentials")
+                                || servletPath.equals("/login/oauth2/code/google")) {
+                            filterChain.doFilter(request, response);
                         } else {
                             filterChain.doFilter(request, response);
                         }
@@ -70,6 +85,10 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
         } else {
             String servletPath = request.getServletPath();
 
+            System.out.println("ServletPath : -> " + servletPath);
+
+            System.out.println("Hello2");
+
             if ((servletPath.equals("/login")) || (servletPath.equals("/register"))
                     || (servletPath.equals("/adminLogin")) ||
                     (servletPath.equals("/getAllProducts"))
@@ -79,10 +98,17 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     || (servletPath.equals("/confirmOtp")) ||
                     (servletPath.equals("/confirmOrder"))
                     || (servletPath.equals("/getOrderInfo")) ||
-                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation"))) {
+                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation"))
+                    || (servletPath.equals("/getOauthCredentials"))
+                    || servletPath.equals("/login/oauth2/code/google") || servletPath.equals("/do-logout")) {
+
+                System.out.println("Hello3");
 
                 filterChain.doFilter(request, response);
             } else {
+
+                System.out.println("Hello4");
+
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }

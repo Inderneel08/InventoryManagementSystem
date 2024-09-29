@@ -44,6 +44,7 @@ function App() {
               <Route path="history"     element={<History />}></Route>
               <Route path="adminLogin"  element={<AdminLogin />}></Route>
               <Route path="logout"      element={<Logout />} ></Route>
+              {/* <Route path="do-logout" element={<DoLogout />}></Route> */}
               <Route path="shoppingCart" element={<ShoppingCart />}></Route>
               <Route path="createProducts" element={<CreateProducts />}></Route>
               <Route path="checkout" element={<Checkout /> }></Route>
