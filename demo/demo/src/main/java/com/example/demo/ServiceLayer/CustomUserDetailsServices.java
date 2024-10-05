@@ -94,4 +94,17 @@ public class CustomUserDetailsServices implements UserDetailsService {
         return (false);
     }
 
+    public void createOAuth2GoogleUser(String email) {
+
+        User user = new User();
+
+        user.setEmail(email);
+
+        user.setRole("OAUTH_USER_GOOGLE");
+
+        user.setIsVerified(1);
+
+        userRepository.save(user);
+    }
+
 }

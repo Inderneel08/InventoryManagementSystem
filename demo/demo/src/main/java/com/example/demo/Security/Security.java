@@ -26,6 +26,9 @@ public class Security {
     @Autowired
     private CustomUserDetailsServices customUserDetailsServices;
 
+    @Autowired
+    private OAuthSuccessHandler oAuthSuccessHandler;
+
     // @Override
     // protected void configure(HttpSecurity httpSecurity) throws Exception {
     // httpSecurity.csrf().disable().cors().and().authorizeRequests()
@@ -42,18 +45,18 @@ public class Security {
         httpSecurity.csrf().disable().cors().and().authorizeRequests()
                 .anyRequest().permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
                 .oauth2Login(oauth2 -> {
-                    oauth2.defaultSuccessUrl("http://localhost:3000", true);
-                    // oauth2.successHandler();
-                })
-                .logout(
-                        logoutForm -> {
-                            logoutForm.logoutUrl("/do-logout");
-                            logoutForm.logoutSuccessUrl("http://localhost:3000");
-                        });
+                    // oauth2.defaultSuccessUrl("http://localhost:3000", true);
+                    oauth2.successHandler(oAuthSuccessHandler);
+                });
+        // .logout(
+        // logoutForm -> {
+        // logoutForm.logoutUrl("/do-logout");
+        // logoutForm.logoutSuccessUrl("http://localhost:3000");
+        // });
 
         return (httpSecurity.build());
     }

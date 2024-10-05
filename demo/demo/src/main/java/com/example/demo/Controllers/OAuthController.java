@@ -63,7 +63,7 @@ public class OAuthController {
 
         System.out.println("Client : ->" + client);
 
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(user.getAttributes().get("email"));
     }
 
 }
