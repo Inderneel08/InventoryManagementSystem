@@ -43,6 +43,16 @@ public class CustomUserDetailsServices implements UserDetailsService {
         return (true);
     }
 
+    public boolean checkgoogleOAuthStatus(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user.getIsOAuthGoogle() == -1) {
+            return (false);
+        }
+
+        return (true);
+    }
+
     public OperationIdOTP findOtpByEmail(String email, int operation) {
         User user = userRepository.findByEmail(email);
 
@@ -103,6 +113,8 @@ public class CustomUserDetailsServices implements UserDetailsService {
         user.setRole("OAUTH_USER_GOOGLE");
 
         user.setIsVerified(1);
+
+        user.setIsOAuthGoogle(1);
 
         userRepository.save(user);
     }

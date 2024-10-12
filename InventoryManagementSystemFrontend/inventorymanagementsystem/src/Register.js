@@ -135,9 +135,9 @@ function Register() {
           <div className='text-center text-md-start mt-4 pt-2'>
             <button className="m-3 btn btn-primary" size='xl' onClick={handleRegister}>Register</button>
 
-            <button className="m-3 btn btn-danger" size='xl' style={{ color: 'white'}}>
-            <FontAwesomeIcon icon={faGoogle} /> Register with Google
-            </button>
+            <a href="http://localhost:8080/oauth2/authorization/google" className="m-3 btn btn-danger" size='xl' style={{ color: 'white'}}>
+              <FontAwesomeIcon icon={faGoogle} /> Register with Google
+            </a>
 
             <button className="m-3 btn btn-primary" size='xl' style={{ color: 'white'}}>
               <FontAwesomeIcon icon={faFacebook} /> Register with Facebook

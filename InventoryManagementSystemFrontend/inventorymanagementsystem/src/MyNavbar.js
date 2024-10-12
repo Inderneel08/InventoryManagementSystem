@@ -11,7 +11,9 @@ import AdminLogin from "./adminLogin";
 import ShoppingCart from "./ShoppingCart";
 import ProtectedRoute from "./ProtectedRoute";
 import ShowProducts from "./ShowProducts";
+import { Modal, Button } from 'react-bootstrap';
 import Badge from 'react-bootstrap/Badge';
+import { Toast, ToastContainer } from 'react-bootstrap';
 
 
 const CustomNavbar = () => {
@@ -32,11 +34,57 @@ const CustomNavbar = () => {
 
     const [dropdownDetails,setDropdownDetails] = useState(false);
 
-    const token = sessionStorage.getItem('token');
+    const [token,setToken] = useState(sessionStorage.getItem('token'));
 
-    const role  = sessionStorage.getItem('role');
+    const [role,setRole]  = useState(sessionStorage.getItem('role'));
 
     const cartItems = JSON.parse(sessionStorage.getItem('cartItems'));
+
+    const [showToast, setShowToast] = useState(false);
+
+    useEffect(() => {
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+
+            const parts = value.split(`; ${name}=`);
+
+            if(parts.length === 2){
+                return(parts.pop().split(';').shift());
+            }
+
+            return(null);
+        };
+
+        const error = getCookie('errorMessage');
+
+        const tokenCookie = getCookie('token');
+
+        if(error){
+            setShowToast(true);
+
+            document.cookie = "errorMessage=; Max-Age=0; path=/;";
+        }
+
+        if(tokenCookie){
+            const jwtTokenObject = JSON.parse(atob(tokenCookie));
+
+            // console.log(jwtTokenObject);
+
+            sessionStorage.setItem('token',jwtTokenObject.token);
+
+            sessionStorage.setItem('emailrecieved',jwtTokenObject.email);
+
+            sessionStorage.setItem('role',jwtTokenObject.role);
+
+            setUserEmail(sessionStorage.getItem('emailrecieved'));
+
+            setToken(sessionStorage.getItem('token'));
+
+            setRole(sessionStorage.getItem('role'));
+
+            document.cookie = "token=; Max-Age=0; path=/;";
+        }
+  },[]);
 
     useEffect(()=>{
 
@@ -69,6 +117,12 @@ const CustomNavbar = () => {
 
     const handleMouseLeaveDetailsDropdown = () => setDropdownDetails(false);
 
+    const handleCloseToast = () => {
+        document.cookie = "errorMessage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        setShowToast(false);
+    };
+
+
 
     const backgroundImages = [
         '/Supermarket.jpg',
@@ -91,6 +145,14 @@ const CustomNavbar = () => {
 
     return(
     <>
+        <ToastContainer position="top-end" className="p-3">
+            <Toast show={showToast} onClose={handleCloseToast} delay={3000} autohide >
+                <Toast.Header style={{ backgroundColor:'red' }}>
+                    <strong className="me-auto" style={{ color:'white' }}>Account Already Exists</strong>
+                </Toast.Header>
+            </Toast>
+        </ToastContainer>
+
         <Navbar bg="warning" data-bs-theme="light">
             <Container>
                 <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">

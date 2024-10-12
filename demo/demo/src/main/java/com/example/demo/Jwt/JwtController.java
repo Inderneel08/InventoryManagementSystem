@@ -43,6 +43,11 @@ public class JwtController {
                     .body(createResponse("Email id is not registered or the password is incorrect.")));
         }
 
+        if (customUserDetailsServices.checkgoogleOAuthStatus(jWtrequest.get("email"))) {
+            return (ResponseEntity.badRequest()
+                    .body(createResponse("Email id is registered via social login.Please login via social login.")));
+        }
+
         String[] authorities = (String[]) userDetails.getAuthorities().stream().map(Object::toString)
                 .toArray(String[]::new);
 

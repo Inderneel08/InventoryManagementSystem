@@ -63,6 +63,8 @@ const ProtectedRoute = ({ children }) => {
   //   oAuth2LoginGoogleCredentials();
   // },[])
 
+
+
   useEffect(() => {
     if (jwtToken != null) {
         checkAuthentication().then((result) => {
@@ -82,6 +84,7 @@ const ProtectedRoute = ({ children }) => {
   if(loading){
     return null;
   }
+
 
   console.log("Authenticated:"+ isAuthenticated);
 

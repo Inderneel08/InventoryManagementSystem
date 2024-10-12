@@ -18,52 +18,54 @@ public class OAuthController {
     @Autowired
     private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
-    @GetMapping("/login/oauth2/code/{provider}")
-    public ResponseEntity<?> getOauthUserCredentials(
-            @PathVariable String provider,
-            OAuth2AuthenticationToken auth2AuthenticationToken) {
-        OAuth2AuthorizedClient client = oAuth2AuthorizedClientService
-                .loadAuthorizedClient(auth2AuthenticationToken.getAuthorizedClientRegistrationId(),
-                        auth2AuthenticationToken.getName());
+    // @GetMapping("/login/oauth2/code/{provider}")
+    // public ResponseEntity<?> getOauthUserCredentials(
+    // @PathVariable String provider,
+    // OAuth2AuthenticationToken auth2AuthenticationToken) {
+    // OAuth2AuthorizedClient client = oAuth2AuthorizedClientService
+    // .loadAuthorizedClient(auth2AuthenticationToken.getAuthorizedClientRegistrationId(),
+    // auth2AuthenticationToken.getName());
 
-        String providerConf = auth2AuthenticationToken.getAuthorizedClientRegistrationId();
+    // String providerConf =
+    // auth2AuthenticationToken.getAuthorizedClientRegistrationId();
 
-        String email = auth2AuthenticationToken.getPrincipal().getName();
+    // String email = auth2AuthenticationToken.getPrincipal().getName();
 
-        System.out.println("ProviderConf : ->" + providerConf);
+    // System.out.println("ProviderConf : ->" + providerConf);
 
-        System.out.println("Email : ->" + email);
+    // System.out.println("Email : ->" + email);
 
-        System.out.println("Client : ->" + client);
+    // System.out.println("Client : ->" + client);
 
-        return ResponseEntity.ok().body(null);
-    }
+    // return ResponseEntity.ok().body(null);
+    // }
 
     // public ResponseEntity<?> getUser
 
-    @GetMapping("/getOauthCredentials")
-    public ResponseEntity<?> getCredentials(
-            OAuth2AuthenticationToken auth2AuthenticationToken) {
+    // @GetMapping("/getOauthCredentials")
+    // public ResponseEntity<?> getCredentials(
+    // OAuth2AuthenticationToken auth2AuthenticationToken) {
 
-        System.out.println(auth2AuthenticationToken);
+    // System.out.println(auth2AuthenticationToken);
 
-        System.out.println(oAuth2AuthorizedClientService.getClass().getName());
+    // System.out.println(oAuth2AuthorizedClientService.getClass().getName());
 
-        OAuth2AuthorizedClient client = oAuth2AuthorizedClientService
-                .loadAuthorizedClient(auth2AuthenticationToken.getAuthorizedClientRegistrationId(),
-                        auth2AuthenticationToken.getName());
+    // OAuth2AuthorizedClient client = oAuth2AuthorizedClientService
+    // .loadAuthorizedClient(auth2AuthenticationToken.getAuthorizedClientRegistrationId(),
+    // auth2AuthenticationToken.getName());
 
-        String providerConf = auth2AuthenticationToken.getAuthorizedClientRegistrationId();
+    // String providerConf =
+    // auth2AuthenticationToken.getAuthorizedClientRegistrationId();
 
-        OAuth2User user = auth2AuthenticationToken.getPrincipal();
+    // OAuth2User user = auth2AuthenticationToken.getPrincipal();
 
-        System.out.println("ProviderConf : ->" + providerConf);
+    // System.out.println("ProviderConf : ->" + providerConf);
 
-        System.out.println("User : ->" + user);
+    // System.out.println("User : ->" + user);
 
-        System.out.println("Client : ->" + client);
+    // System.out.println("Client : ->" + client);
 
-        return ResponseEntity.ok().body(user.getAttributes().get("email"));
-    }
+    // return ResponseEntity.ok().body(user.getAttributes().get("email"));
+    // }
 
 }

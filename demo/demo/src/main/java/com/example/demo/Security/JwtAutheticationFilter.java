@@ -55,22 +55,18 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                         if (role.equals("ADMIN")) {
                             System.out.println("To filter");
                             filterChain.doFilter(request, response);
-                        } else if (servletPath.equals("/getOauthCredentials")
-                                || servletPath.equals("/login/oauth2/code/google")) {
-                            filterChain.doFilter(request, response);
+                        } else {
+
                         }
                     } else {
                         if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))
                                 || (servletPath.equals("/confirmOrder")) || (servletPath.equals("/confirmation"))
                                 || (servletPath.equals("/fetchOrderHistory"))) {
-                            if (role.equals("USER")) {
+                            if (role.equals("USER") || role.equals("OAUTH_USER_GOOGLE")) {
                                 filterChain.doFilter(request, response);
                             } else {
                                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             }
-                        } else if (servletPath.equals("/getOauthCredentials")
-                                || servletPath.equals("/login/oauth2/code/google")) {
-                            filterChain.doFilter(request, response);
                         } else {
                             filterChain.doFilter(request, response);
                         }
@@ -98,9 +94,7 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     || (servletPath.equals("/confirmOtp")) ||
                     (servletPath.equals("/confirmOrder"))
                     || (servletPath.equals("/getOrderInfo")) ||
-                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation"))
-                    || (servletPath.equals("/getOauthCredentials"))
-                    || servletPath.equals("/login/oauth2/code/google") || servletPath.equals("/do-logout")) {
+                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation"))) {
 
                 System.out.println("Hello3");
 
