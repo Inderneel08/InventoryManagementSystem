@@ -53,16 +53,15 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     if (servletPath.equals("/createProduct") ||
                             (servletPath.equals("/uploadImage"))) {
                         if (role.equals("ADMIN")) {
-                            System.out.println("To filter");
+                            System.out.println("To Admin filter");
                             filterChain.doFilter(request, response);
-                        } else {
-
                         }
                     } else {
                         if (servletPath.equals("/checkout") || (servletPath.equals("/onlinePayment"))
                                 || (servletPath.equals("/confirmOrder")) || (servletPath.equals("/confirmation"))
                                 || (servletPath.equals("/fetchOrderHistory"))) {
-                            if (role.equals("USER") || role.equals("OAUTH_USER_GOOGLE")) {
+                            if (role.equals("USER") || role.equals("OAUTH_USER_GOOGLE")
+                                    || role.equals("OAUTH_USER_FACEBOOK")) {
                                 filterChain.doFilter(request, response);
                             } else {
                                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);

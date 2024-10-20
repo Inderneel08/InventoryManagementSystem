@@ -139,9 +139,10 @@ function Register() {
               <FontAwesomeIcon icon={faGoogle} /> Register with Google
             </a>
 
-            <button className="m-3 btn btn-primary" size='xl' style={{ color: 'white'}}>
-              <FontAwesomeIcon icon={faFacebook} /> Register with Facebook
-            </button>
+            <a href="http://localhost:8080/oauth2/authorization/facebook" className="m-3 btn btn-primary" size='xl' style={{ color: 'white'}}>
+              <FontAwesomeIcon icon={faFacebook} />
+              <span className='p-2'>Register with Facebook</span>
+            </a>
 
             <p className="small fw-bold mt-2 pt-1 mb-2">Already have an account? <Link to="/signIn" className="link-danger">Sign In</Link></p>
           </div>

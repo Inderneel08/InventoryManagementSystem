@@ -105,4 +105,11 @@ public class FinalOrderServiceLayer {
         }
     }
 
+    public FinalOrder fetchLastFinalOrderDetails(String email)
+    {
+        FinalOrder finalOrder = finalOrderRepository.fetchFinalOrderLatestViaEmail(email);
+
+        return(finalOrder);
+    }
+
 }

@@ -38,6 +38,9 @@ public class User implements UserDetails {
     @Column(name = "isOAuthGoogle", nullable = false)
     private int isOAuthGoogle = -1;
 
+    @Column(name = "isOAuthFacebook",nullable = false)
+    private int isOAuthFacebook = -1;
+
     @Column(name = "isVerified", nullable = false)
     private int isVerified = -1;
 

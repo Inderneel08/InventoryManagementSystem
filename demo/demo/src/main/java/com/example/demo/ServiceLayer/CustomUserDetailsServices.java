@@ -53,6 +53,16 @@ public class CustomUserDetailsServices implements UserDetailsService {
         return (true);
     }
 
+    public boolean checkfacebookOAuthFacebook(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user.getIsOAuthFacebook() == -1) {
+            return (false);
+        }
+
+        return (true);
+    }
+
     public OperationIdOTP findOtpByEmail(String email, int operation) {
         User user = userRepository.findByEmail(email);
 
@@ -102,6 +112,20 @@ public class CustomUserDetailsServices implements UserDetailsService {
         }
 
         return (false);
+    }
+
+    public void createOAuth2FacebookUser(String email) {
+        User user = new User();
+
+        user.setEmail(email);
+
+        user.setRole("OAUTH_USER_FACEBOOK");
+
+        user.setIsVerified(1);
+
+        user.setIsOAuthFacebook(1);
+
+        userRepository.save(user);
     }
 
     public void createOAuth2GoogleUser(String email) {

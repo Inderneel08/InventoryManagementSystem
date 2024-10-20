@@ -25,4 +25,7 @@ public interface FinalOrderRepository extends JpaRepository<FinalOrder, String> 
 
     @Query(value = "SELECT finalorder.orderId,finalorder.billing_address,finalorder.totalAmount,finalorder.shipping_address,finalorder.pincode,finalorder.date,finalorder.netAmount,finalorder.email,finalorder.phoneNumber,finalorder.method,states.states from finalorder INNER JOIN states on finalorder.state=states.id where finalorder.email = :email", nativeQuery = true)
     Page<?> fetchOrdersByEmail(String email, Pageable pageable);
+
+    @Query(value = "SELECT * FROM finalorder where email = :email order by id desc limit 1", nativeQuery = true)
+    FinalOrder fetchFinalOrderLatestViaEmail(String email);
 }

@@ -39,25 +39,52 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
             OAuth2User user = oAuth2AuthenticationToken.getPrincipal();
 
+            // System.out.println(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId());
+
             UserDetails userDetails = customUserDetailsServices
                     .loadUserByUsername(user.getAttributes().get("email").toString());
 
             if (userDetails == null) {
-                customUserDetailsServices.createOAuth2GoogleUser(user.getAttributes().get("email").toString());
+                if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("google")) {
+                    customUserDetailsServices.createOAuth2GoogleUser(user.getAttributes().get("email").toString());
+                }
+
+                if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("facebook")) {
+                    customUserDetailsServices.createOAuth2FacebookUser(user.getAttributes().get("email").toString());
+                }
             }
 
-            if (!customUserDetailsServices.checkgoogleOAuthStatus(user.getAttributes().get("email").toString())) {
-                // Already account exists via simple login.
+            if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("google")) {
+                if (!customUserDetailsServices.checkgoogleOAuthStatus(user.getAttributes().get("email").toString())) {
+                    // Already account exists via simple login.
 
-                Cookie errorCookie = new Cookie("errorMessage", "ACCOUNTEXISTS");
-                errorCookie.setPath("/");
-                errorCookie.setHttpOnly(false);
-                errorCookie.setMaxAge(60 * 5);
-                response.addCookie(errorCookie);
+                    Cookie errorCookie = new Cookie("errorMessage", "ACCOUNTEXISTS");
+                    errorCookie.setPath("/");
+                    errorCookie.setHttpOnly(false);
+                    errorCookie.setMaxAge(60 * 5);
+                    response.addCookie(errorCookie);
 
-                response.sendRedirect("http://localhost:3000/");
+                    response.sendRedirect("http://localhost:3000/");
 
-                return;
+                    return;
+                }
+            }
+
+            if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("facebook")) {
+                if (!customUserDetailsServices.checkgoogleOAuthStatus(user.getAttributes().get("email").toString())) {
+                    // Already account exists via simple login.
+
+                    Cookie errorCookie = new Cookie("errorMessage", "ACCOUNTEXISTS");
+                    errorCookie.setPath("/");
+                    errorCookie.setHttpOnly(false);
+                    errorCookie.setMaxAge(60 * 5);
+                    response.addCookie(errorCookie);
+
+                    response.sendRedirect("http://localhost:3000/");
+
+                    return;
+                }
+
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -67,6 +94,10 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             String email = user.getAttributes().get("email").toString();
 
             String authority = "OAUTH_USER_GOOGLE";
+
+            if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("facebook")) {
+                authority = "OAUTH_USER_FACEBOOK";
+            }
 
             String jwtTokenJson = objectMapper.writeValueAsString(new JwtToken(email, generatedToken, authority));
 

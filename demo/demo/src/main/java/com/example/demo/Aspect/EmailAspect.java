@@ -1,5 +1,7 @@
 package com.example.demo.Aspect;
 
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
@@ -11,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.DAO.FinalOrder;
+import com.example.demo.PdfGeneratorService.PdfGeneratorService;
 import com.example.demo.ServiceLayer.EmailServiceLayer;
+import com.example.demo.ServiceLayer.FinalOrderServiceLayer;
+import com.example.demo.ServiceLayer.OrderServiceLayer;
 
 @Aspect
 @Component
@@ -19,6 +25,15 @@ public class EmailAspect {
 
     @Autowired
     private EmailServiceLayer emailServiceLayer;
+
+    @Autowired
+    private FinalOrderServiceLayer finalOrderServiceLayer;
+
+    @Autowired
+    private OrderServiceLayer orderServiceLayer;
+
+    @Autowired
+    private PdfGeneratorService pdfGeneratorService;
 
     private String extractedEmail;
 
@@ -32,7 +47,7 @@ public class EmailAspect {
                 String subject = "Registration Successful";
                 String text = "Registration has been successfull use this OTP to confirm the email id ";
 
-                emailServiceLayer.registerEmail(extractedEmail, subject, text,0);
+                emailServiceLayer.registerEmail(extractedEmail, subject, text, 0);
             }
         }
 
@@ -44,6 +59,20 @@ public class EmailAspect {
     @Before("@annotation(com.example.demo.Aspect.ExtractEmail) && args(registrationRequest,..)")
     public void extractEmail(JoinPoint joinPoint, Map<String, String> registrationRequest) {
         extractedEmail = registrationRequest.get("email");
+    }
+
+    @After("@annotation(com.example.demo.Aspect.SendReciept)")
+    public void sendReciept() {
+        FinalOrder finalOrder = finalOrderServiceLayer.fetchLastFinalOrderDetails(extractedEmail);
+
+        List<?> orderList = orderServiceLayer.fetchOrders(finalOrder.getOrderId());
+
+        try {
+            ByteArrayOutputStream pdfStream = pdfGeneratorService.generateOrderInvoice(finalOrder, orderList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

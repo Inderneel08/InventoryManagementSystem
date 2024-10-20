@@ -55,4 +55,7 @@ public class FinalOrder {
 
     @Column(name = "phoneNumber")
     private String phoneNumber;
+
+    @Column(name = "id")
+    private int id;
 }

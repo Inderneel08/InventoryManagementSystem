@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.Aspect.ExtractEmail;
+import com.example.demo.Aspect.SendReciept;
 import com.example.demo.DAO.CartItem;
 import com.example.demo.DAO.OperationIdOTP;
 import com.example.demo.DAO.Orders;
@@ -60,6 +63,8 @@ public class CheckoutController {
     // private String clientSecret;
 
     @PostMapping("/confirmOrder")
+    @ExtractEmail
+    @SendReciept
     public ResponseEntity<?> reviewOtpForOrdering(
             @RequestBody Map<String, Object> request) {
         String email = (String) request.get("email");
