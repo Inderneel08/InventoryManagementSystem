@@ -21,7 +21,7 @@ public class FinalOrder {
     private String orderId;
 
     @Column(name = "totalAmount")
-    private double totalAmount;
+    private Double totalAmount;
 
     @Column(name = "state")
     private String state;

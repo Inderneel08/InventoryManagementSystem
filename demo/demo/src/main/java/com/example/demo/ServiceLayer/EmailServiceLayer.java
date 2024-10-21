@@ -1,16 +1,29 @@
 package com.example.demo.ServiceLayer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.DAO.OrderDetails;
 import com.example.demo.DAO.Otp;
 import com.example.demo.DAO.User;
 import com.example.demo.Repository.UserRepository;
+
+import jakarta.activation.DataSource;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import org.springframework.mail.SimpleMailMessage;
 
@@ -70,6 +83,25 @@ public class EmailServiceLayer {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
+
+        mailSender.send(message);
+    }
+
+    public void sendEmailWithPdfInMemory(String toEmail, ByteArrayOutputStream pdfStream,
+            List<OrderDetails> orderDetails) throws MessagingException, IOException {
+        MimeMessage message = mailSender.createMimeMessage();
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(toEmail);
+        helper.setSubject("Your Order Receipt - Order #" + orderDetails.get(0).getOrderId());
+        helper.setText("Thank you for your order! Please find your receipt attached in PDF format.");
+
+        InputStream inputStream = new ByteArrayInputStream(pdfStream.toByteArray());
+
+        ByteArrayDataSource dataSource = new ByteArrayDataSource(inputStream, "application/pdf");
+
+        helper.addAttachment("OrderReceipt.pdf", dataSource);
 
         mailSender.send(message);
     }

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.DAO.FinalOrder;
+import com.example.demo.DAO.OrderDetails;
 import com.example.demo.PdfGeneratorService.PdfGeneratorService;
 import com.example.demo.ServiceLayer.EmailServiceLayer;
 import com.example.demo.ServiceLayer.FinalOrderServiceLayer;
@@ -63,12 +64,12 @@ public class EmailAspect {
 
     @After("@annotation(com.example.demo.Aspect.SendReciept)")
     public void sendReciept() {
-        FinalOrder finalOrder = finalOrderServiceLayer.fetchLastFinalOrderDetails(extractedEmail);
-
-        List<?> orderList = orderServiceLayer.fetchOrders(finalOrder.getOrderId());
+        List<OrderDetails> finalOrderList = finalOrderServiceLayer.fetchLastFinalOrderDetails(extractedEmail);
 
         try {
-            ByteArrayOutputStream pdfStream = pdfGeneratorService.generateOrderInvoice(finalOrder, orderList);
+            ByteArrayOutputStream pdfStream = pdfGeneratorService.generateOrderInvoice(finalOrderList);
+
+            emailServiceLayer.sendEmailWithPdfInMemory(extractedEmail, pdfStream, finalOrderList);
 
         } catch (Exception e) {
             e.printStackTrace();

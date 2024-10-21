@@ -93,7 +93,7 @@ public class JwtAutheticationFilter extends OncePerRequestFilter {
                     || (servletPath.equals("/confirmOtp")) ||
                     (servletPath.equals("/confirmOrder"))
                     || (servletPath.equals("/getOrderInfo")) ||
-                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation"))) {
+                    (servletPath.equals("/onlinePayment")) || (servletPath.equals("/confirmation")) || (servletPath.equals("/fetchOurList"))) {
 
                 System.out.println("Hello3");
 

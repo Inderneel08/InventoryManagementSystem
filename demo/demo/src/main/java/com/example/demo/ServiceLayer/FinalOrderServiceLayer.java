@@ -1,14 +1,18 @@
 package com.example.demo.ServiceLayer;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.DAO.FinalOrder;
+import com.example.demo.DAO.OrderDetails;
 import com.example.demo.Repository.FinalOrderRepository;
 
 @Service
@@ -105,11 +109,26 @@ public class FinalOrderServiceLayer {
         }
     }
 
-    public FinalOrder fetchLastFinalOrderDetails(String email)
-    {
-        FinalOrder finalOrder = finalOrderRepository.fetchFinalOrderLatestViaEmail(email);
+    public List<OrderDetails> fetchLastFinalOrderDetails(String email) {
+        List<Object[]> finalOrder = finalOrderRepository.fetchFinalOrderLatestViaEmail(email);
 
-        return(finalOrder);
+        List<OrderDetails> orderDetailsList = new ArrayList<>();
+
+        for (Object[] row : finalOrder) {
+            OrderDetails orderDetails = new OrderDetails();
+
+            orderDetails.setProductName((String) row[0]);
+            orderDetails.setPricePerItem(((String) row[1]));
+            orderDetails.setOrderId((String) row[2]);
+            orderDetails.setCountProducts((Integer) row[3]);
+            orderDetails.setTotalAmount(((BigDecimal) row[4]).doubleValue());
+            orderDetails.setNetAmount(((BigDecimal) row[5]).doubleValue());
+            orderDetails.setEmail((String) row[6]);
+
+            orderDetailsList.add(orderDetails);
+        }
+
+        return (orderDetailsList);
     }
 
 }
