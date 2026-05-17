@@ -156,7 +156,9 @@ public class CheckoutController {
 
         String phoneNumber = (String) paymentRequest.get("phoneNumber");
 
-        Double netAmount = (Double) paymentRequest.get("netAmount");
+        Number netAmountValue = (Number) paymentRequest.get("netAmount");
+
+        Double netAmount = netAmountValue.doubleValue();
 
         Double roundedAmount = Math.round(netAmount * 100.0) / 100.0;
 
